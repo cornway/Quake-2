@@ -19,6 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_main.c
 
+#ifdef STM32
+#define REF_HARD_LINKED
+#endif
+
 #include "r_local.h"
 
 viddef_t	vid;
@@ -1341,7 +1345,7 @@ void Draw_GetPalette (void)
         out[2] = b;
 	}
 
-	free (pal);
+	heap_free (pal);
 }
 
 struct image_s *R_RegisterSkin (char *name);

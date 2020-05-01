@@ -2529,13 +2529,13 @@ void StartServer_MenuInit( void )
 	char *s;
 	int length;
 	int i;
-	FILE *fp;
+	int *fp;
 
 	/*
 	** load the list of map names
 	*/
 	Com_sprintf( mapsname, sizeof( mapsname ), "%s/maps.lst", FS_Gamedir() );
-	if ( ( fp = fopen( mapsname, "rb" ) ) == 0 )
+	if ( ( d_open( mapsname, &fp, "r" ) ) >= 0 )
 	{
 		if ( ( length = FS_LoadFile( "maps.lst", ( void ** ) &buffer ) ) == -1 )
 			Com_Error( ERR_DROP, "couldn't find maps.lst\n" );
@@ -2545,9 +2545,9 @@ void StartServer_MenuInit( void )
 #ifdef _WIN32
 		length = filelength( fileno( fp  ) );
 #else
-		fseek(fp, 0, SEEK_END);
-		length = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
+		d_seek(fp, 0, DSEEK_END);
+		length = d_tell(fp);
+		d_seek(fp, 0, DSEEK_SET);
 #endif
 		buffer = malloc( length );
 		fread( buffer, length, 1, fp );
@@ -2593,7 +2593,7 @@ void StartServer_MenuInit( void )
 	if ( fp != 0 )
 	{
 		fp = 0;
-		free( buffer );
+		heap_free( buffer );
 	}
 	else
 	{
@@ -3549,7 +3549,7 @@ static qboolean PlayerConfig_ScanDirectories( void )
 					if ( strrchr( scratch, '.' ) )
 						*strrchr( scratch, '.' ) = 0;
 
-					skinnames[s] = strdup( scratch );
+					skinnames[s] = d_strdup( scratch );
 					s++;
 				}
 			}

@@ -68,7 +68,7 @@ to start a download from the server.
 */
 qboolean	CL_CheckOrDownloadFile (char *filename)
 {
-	FILE *fp;
+	int fp;
 	char	name[MAX_OSPATH];
 
 	if (strstr (filename, ".."))
@@ -97,11 +97,11 @@ qboolean	CL_CheckOrDownloadFile (char *filename)
 
 //	FS_CreatePath (name);
 
-	fp = fopen (name, "r+b");
+	d_open (name, &fp, "r");
 	if (fp) { // it exists
 		int len;
-		fseek(fp, 0, SEEK_END);
-		len = ftell(fp);
+		d_seek(fp, 0, DSEEK_END);
+		len = d_tell(fp);
 
 		cls.download = fp;
 
@@ -212,22 +212,22 @@ void CL_ParseDownload (void)
 		if (cls.download)
 		{
 			// if here, we tried to resume a file but the server said no
-			fclose (cls.download);
-			cls.download = NULL;
+			d_close (cls.download);
+			cls.download = -1;
 		}
 		CL_RequestNextDownload ();
 		return;
 	}
 
 	// open the file if not opened yet
-	if (!cls.download)
+	if (cls.download < 0)
 	{
 		CL_DownloadFileName(name, sizeof(name), cls.downloadtempname);
 
 		FS_CreatePath (name);
 
-		cls.download = fopen (name, "wb");
-		if (!cls.download)
+	    d_open (name, &cls.download, "wb");
+		if (cls.download < 0)
 		{
 			net_message.readcount += size;
 			Com_Printf ("Failed to open %s\n", cls.downloadtempname);
@@ -236,7 +236,7 @@ void CL_ParseDownload (void)
 		}
 	}
 
-	fwrite (net_message.data + net_message.readcount, 1, size, cls.download);
+	d_write (cls.download, net_message.data + net_message.readcount, size);
 	net_message.readcount += size;
 
 	if (percent != 100)
@@ -263,7 +263,7 @@ void CL_ParseDownload (void)
 
 //		Com_Printf ("100%%\n");
 
-		fclose (cls.download);
+		d_close (cls.download);
 
 		// rename the temp file to it's final name
 		CL_DownloadFileName(oldn, sizeof(oldn), cls.downloadtempname);
@@ -272,7 +272,7 @@ void CL_ParseDownload (void)
 		if (r)
 			Com_Printf ("failed to rename.\n");
 
-		cls.download = NULL;
+		cls.download = -1;
 		cls.downloadpercent = 0;
 
 		// get another file if needed
@@ -708,10 +708,10 @@ void CL_ParseServerMessage (void)
 
 		case svc_reconnect:
 			Com_Printf ("Server disconnected, reconnecting\n");
-			if (cls.download) {
+			if (cls.download >= 0) {
 				//ZOID, close download
-				fclose (cls.download);
-				cls.download = NULL;
+				d_close (cls.download);
+				cls.download = -1;
 			}
 			cls.state = ca_connecting;
 			cls.connect_time = -99999;	// CL_CheckForResend() will fire immediately

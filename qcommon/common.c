@@ -31,10 +31,15 @@ char	*com_argv[MAX_NUM_ARGVS+1];
 
 int		realtime;
 
+#ifndef STM32
 jmp_buf abortframe;		// an ERR_DROP occured, exit the entire frame
+#else
+int abortframe = -1;
+#define longjmp(a, b) assert(0)
+#define setjmp(a) 0
+#endif
 
-
-FILE	*log_stats_file;
+int log_stats_file;
 
 cvar_t	*host_speeds;
 cvar_t	*log_stats;
@@ -43,7 +48,7 @@ cvar_t	*timescale;
 cvar_t	*fixedtime;
 cvar_t	*logfile_active;	// 1 = buffer log, 2 = flush after each print
 cvar_t	*showtrace;
-cvar_t	*dedicated;
+extern cvar_t	*dedicated;
 
 FILE	*logfile;
 
@@ -1503,19 +1508,19 @@ void Qcommon_Frame (int msec)
 		{
 			if ( log_stats_file )
 			{
-				fclose( log_stats_file );
-				log_stats_file = 0;
+				d_close( log_stats_file );
+				log_stats_file = -1;
 			}
-			log_stats_file = fopen( "stats.log", "w" );
-			if ( log_stats_file )
-				fprintf( log_stats_file, "entities,dlights,parts,frame time\n" );
+			d_open( "stats.log", &log_stats_file, "w" );
+			if ( log_stats_file >= 0)
+				d_printf( log_stats_file, "entities,dlights,parts,frame time\n" );
 		}
 		else
 		{
 			if ( log_stats_file )
 			{
-				fclose( log_stats_file );
-				log_stats_file = 0;
+				d_close( log_stats_file );
+				log_stats_file = -1;
 			}
 		}
 	}

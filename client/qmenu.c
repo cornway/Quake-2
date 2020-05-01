@@ -133,7 +133,7 @@ void Field_Draw( menufield_s *f )
 
 qboolean Field_Key( menufield_s *f, int key )
 {
-	extern int keydown[];
+	extern int keydown_var[];
 
 	switch ( key )
 	{
@@ -194,8 +194,8 @@ qboolean Field_Key( menufield_s *f, int key )
 	/*
 	** support pasting from the clipboard
 	*/
-	if ( ( toupper( key ) == 'V' && keydown[K_CTRL] ) ||
-		 ( ( ( key == K_INS ) || ( key == K_KP_INS ) ) && keydown[K_SHIFT] ) )
+	if ( ( toupper( key ) == 'V' && keydown_var[K_CTRL] ) ||
+		 ( ( ( key == K_INS ) || ( key == K_KP_INS ) ) && keydown_var[K_SHIFT] ) )
 	{
 		char *cbd;
 		

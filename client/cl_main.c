@@ -303,6 +303,7 @@ void Cmd_ForwardToServer (void)
 
 void CL_Setenv_f( void )
 {
+#ifndef STM32
 	int argc = Cmd_Argc();
 
 	if ( argc > 2 )
@@ -334,6 +335,7 @@ void CL_Setenv_f( void )
 			Com_Printf( "%s undefined\n", Cmd_Argv(1), env );
 		}
 	}
+#endif //STM32
 }
 
 
@@ -651,9 +653,9 @@ void CL_Disconnect (void)
 	CL_ClearState ();
 
 	// stop download
-	if (cls.download) {
-		fclose(cls.download);
-		cls.download = NULL;
+	if (cls.download >= 0) {
+		d_close(cls.download);
+		cls.download = -1;
 	}
 
 	cls.state = ca_disconnected;
@@ -729,7 +731,7 @@ void CL_Changing_f (void)
 {
 	//ZOID
 	//if we are downloading, we don't change!  This so we don't suddenly stop downloading a map
-	if (cls.download)
+	if (cls.download >= 0)
 		return;
 
 	SCR_BeginLoadingPlaque ();
@@ -749,7 +751,7 @@ void CL_Reconnect_f (void)
 {
 	//ZOID
 	//if we are downloading, we don't change!  This so we don't suddenly stop downloading a map
-	if (cls.download)
+	if (cls.download >= 0)
 		return;
 
 	S_StopAllSounds ();
@@ -1754,15 +1756,15 @@ void CL_Frame (int msec)
 			if ( !lasttimecalled )
 			{
 				lasttimecalled = Sys_Milliseconds();
-				if ( log_stats_file )
-					fprintf( log_stats_file, "0\n" );
+				if ( log_stats_file >= 0 )
+					d_printf( log_stats_file, "0\n" );
 			}
 			else
 			{
 				int now = Sys_Milliseconds();
 
-				if ( log_stats_file )
-					fprintf( log_stats_file, "%d\n", now - lasttimecalled );
+				if ( log_stats_file >= 0 )
+					d_printf( log_stats_file, "%d\n", now - lasttimecalled );
 				lasttimecalled = now;
 			}
 		}

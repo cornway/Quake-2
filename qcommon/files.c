@@ -101,15 +101,15 @@ The "game directory" is the first tree on the search path and directory that all
 FS_filelength
 ================
 */
-int FS_filelength (FILE *f)
+int FS_filelength (int f)
 {
 	int		pos;
 	int		end;
 
-	pos = ftell (f);
-	fseek (f, 0, SEEK_END);
-	end = ftell (f);
-	fseek (f, pos, SEEK_SET);
+	pos = d_tell (f);
+	d_seek (f, 0, DSEEK_END);
+	end = d_tell (f);
+	d_seek (f, pos, DSEEK_SET);
 
 	return end;
 }
@@ -146,9 +146,9 @@ For some reason, other dll's can't just cal fclose()
 on files returned by FS_FOpenFile...
 ==============
 */
-void FS_FCloseFile (FILE *f)
+void FS_FCloseFile (int f)
 {
-	fclose (f);
+	d_close (f);
 }
 
 
@@ -203,7 +203,7 @@ a seperate file.
 */
 int file_from_pak = 0;
 #ifndef NO_ADDONS
-int FS_FOpenFile (char *filename, FILE **file)
+int FS_FOpenFile (char *filename, int *file)
 {
 	searchpath_t	*search;
 	char			netpath[MAX_OSPATH];
@@ -219,11 +219,11 @@ int FS_FOpenFile (char *filename, FILE **file)
 		if (!strncmp (filename, link->from, link->fromlength))
 		{
 			Com_sprintf (netpath, sizeof(netpath), "%s%s",link->to, filename+link->fromlength);
-			*file = fopen (netpath, "rb");
-			if (*file)
+			d_open (netpath, file, "r");
+			if (file >= 0)
 			{		
 				Com_DPrintf ("link file: %s\n",netpath);
-				return FS_filelength (*file);
+				return FS_filelength (file);
 			}
 			return -1;
 		}
@@ -343,7 +343,7 @@ Properly handles partial reads
 */
 void CDAudio_Stop(void);
 #define	MAX_READ	0x10000		// read in blocks of 64k
-void FS_Read (void *buffer, int len, FILE *f)
+void FS_Read (void *buffer, int len, int f)
 {
 	int		block, remaining;
 	int		read;
@@ -360,7 +360,7 @@ void FS_Read (void *buffer, int len, FILE *f)
 		block = remaining;
 		if (block > MAX_READ)
 			block = MAX_READ;
-		read = fread (buf, 1, block, f);
+		read = d_read (f, buf, block);
 		if (read == 0)
 		{
 			// we might have been trying to read from a CD
@@ -714,7 +714,7 @@ char **FS_ListFiles( char *findname, int *numfiles, unsigned musthave, unsigned 
 	{
 		if ( s[strlen(s)-1] != '.' )
 		{
-			list[nfiles] = strdup( s );
+			list[nfiles] = d_strdup( s );
 #ifdef _WIN32
 			strlwr( list[nfiles] );
 #endif

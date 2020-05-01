@@ -18,6 +18,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifdef STM32
+#define GAME_HARD_LINKED
+#endif
+
 #include "g_local.h"
 
 game_locals_t	game;
@@ -235,7 +239,7 @@ void EndDMLevel (void)
 
 	// see if it's in the map list
 	if (*sv_maplist->string) {
-		s = strdup(sv_maplist->string);
+		s = d_strdup(sv_maplist->string);
 		f = NULL;
 		t = strtok(s, seps);
 		while (t != NULL) {

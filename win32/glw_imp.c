@@ -591,7 +591,7 @@ void GLimp_EndFrame (void)
 	err = qglGetError();
 	assert( err == GL_NO_ERROR );
 
-	if ( stricmp( gl_drawbuffer->string, "GL_BACK" ) == 0 )
+	if ( strcasecmp( gl_drawbuffer->string, "GL_BACK" ) == 0 )
 	{
 		if ( !qwglSwapBuffers( glw_state.hDC ) )
 			ri.Sys_Error( ERR_FATAL, "GLimp_EndFrame() - SwapBuffers() failed!\n" );

@@ -41,7 +41,7 @@ qboolean	consolekeys[256];	// if true, can't be rebound while in console
 qboolean	menubound[256];	// if true, can't be rebound while in menu
 int		keyshift[256];		// key to map to if shift held down in console
 int		key_repeats[256];	// if > 1, it is autorepeating
-qboolean	keydown[256];
+qboolean	keydown_var[256];
 
 typedef struct
 {
@@ -240,8 +240,8 @@ void Key_Console (int key)
 		break;
 	}
 
-	if ( ( toupper( key ) == 'V' && keydown[K_CTRL] ) ||
-		 ( ( ( key == K_INS ) || ( key == K_KP_INS ) ) && keydown[K_SHIFT] ) )
+	if ( ( toupper( key ) == 'V' && keydown_var[K_CTRL] ) ||
+		 ( ( ( key == K_INS ) || ( key == K_KP_INS ) ) && keydown_var[K_SHIFT] ) )
 	{
 		char *cbd;
 		
@@ -269,7 +269,7 @@ void Key_Console (int key)
 
 	if ( key == 'l' ) 
 	{
-		if ( keydown[K_CTRL] )
+		if ( keydown_var[K_CTRL] )
 		{
 			Cbuf_AddText ("clear\n");
 			return;
@@ -301,7 +301,7 @@ void Key_Console (int key)
 		return;
 	}
 	
-	if ( ( key == K_BACKSPACE ) || ( key == K_LEFTARROW ) || ( key == K_KP_LEFTARROW ) || ( ( key == 'h' ) && ( keydown[K_CTRL] ) ) )
+	if ( ( key == K_BACKSPACE ) || ( key == K_LEFTARROW ) || ( key == K_KP_LEFTARROW ) || ( ( key == 'h' ) && ( keydown_var[K_CTRL] ) ) )
 	{
 		if (key_linepos > 1)
 			key_linepos--;
@@ -309,7 +309,7 @@ void Key_Console (int key)
 	}
 
 	if ( ( key == K_UPARROW ) || ( key == K_KP_UPARROW ) ||
-		 ( ( key == 'p' ) && keydown[K_CTRL] ) )
+		 ( ( key == 'p' ) && keydown_var[K_CTRL] ) )
 	{
 		do
 		{
@@ -324,7 +324,7 @@ void Key_Console (int key)
 	}
 
 	if ( ( key == K_DOWNARROW ) || ( key == K_KP_DOWNARROW ) ||
-		 ( ( key == 'n' ) && keydown[K_CTRL] ) )
+		 ( ( key == 'n' ) && keydown_var[K_CTRL] ) )
 	{
 		if (history_line == edit_line) return;
 		do
@@ -611,13 +611,13 @@ Key_WriteBindings
 Writes lines containing "bind key value"
 ============
 */
-void Key_WriteBindings (FILE *f)
+void Key_WriteBindings (int f)
 {
 	int		i;
 
 	for (i=0 ; i<256 ; i++)
 		if (keybindings[i] && keybindings[i][0])
-			fprintf (f, "bind %s \"%s\"\n", Key_KeynumToString(i), keybindings[i]);
+			d_printf (f, "bind %s \"%s\"\n", Key_KeynumToString(i), keybindings[i]);
 }
 
 
@@ -817,7 +817,7 @@ void Key_Event (int key, qboolean down, unsigned time)
 	}
 
 	// track if any key is down for BUTTON_ANY
-	keydown[key] = down;
+	keydown_var[key] = down;
 	if (down)
 	{
 		if (key_repeats[key] == 1)
@@ -918,9 +918,9 @@ void Key_ClearStates (void)
 
 	for (i=0 ; i<256 ; i++)
 	{
-		if ( keydown[i] || key_repeats[i] )
+		if ( keydown_var[i] || key_repeats[i] )
 			Key_Event( i, false, 0 );
-		keydown[i] = 0;
+		keydown_var[i] = 0;
 		key_repeats[i] = 0;
 	}
 }

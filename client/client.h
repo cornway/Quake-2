@@ -37,6 +37,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "console.h"
 #include "cdaudio.h"
 
+#include <misc_utils.h>
+#include <dev_io.h>
+#include <audio_main.h>
+#include <input_main.h>
+#include <heap.h>
+
 //=============================================================================
 
 typedef struct
@@ -225,7 +231,7 @@ typedef struct
 
 	int			challenge;			// from the server to use for connecting
 
-	FILE		*download;			// file transfer from server
+	int		    download;			// file transfer from server
 	char		downloadtempname[MAX_OSPATH];
 	char		downloadname[MAX_OSPATH];
 	int			downloadnumber;

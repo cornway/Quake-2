@@ -633,7 +633,7 @@ void Con_DrawConsole (float frac)
 //ZOID
 	// draw the download bar
 	// figure out width
-	if (cls.download) {
+	if (cls.download >= 0) {
 		if ((text = strrchr(cls.downloadname, '/')) != NULL)
 			text++;
 		else

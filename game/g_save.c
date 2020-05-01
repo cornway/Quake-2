@@ -588,11 +588,11 @@ ReadEdict
 All pointer variables (except function pointers) must be handled specially.
 ==============
 */
-void ReadEdict (FILE *f, edict_t *ent)
+void ReadEdict (int f, edict_t *ent)
 {
 	field_t		*field;
 
-	fread (ent, sizeof(*ent), 1, f);
+	d_read (f, ent, sizeof(*ent));
 
 	for (field=fields ; field->name ; field++)
 	{
@@ -607,11 +607,11 @@ ReadLevelLocals
 All pointer variables (except function pointers) must be handled specially.
 ==============
 */
-void ReadLevelLocals (FILE *f)
+void ReadLevelLocals (int f)
 {
 	field_t		*field;
 
-	fread (&level, sizeof(level), 1, f);
+	d_read (f, &level, sizeof(level));
 
 	for (field=levelfields ; field->name ; field++)
 	{

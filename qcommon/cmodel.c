@@ -1718,9 +1718,9 @@ CM_WritePortalState
 Writes the portal state to a savegame file
 ===================
 */
-void	CM_WritePortalState (FILE *f)
+void	CM_WritePortalState (int f)
 {
-	fwrite (portalopen, sizeof(portalopen), 1, f);
+	d_write (f, portalopen, sizeof(portalopen));
 }
 
 /*
@@ -1731,7 +1731,7 @@ Reads the portal state from a savegame file
 and recalculates the area connections
 ===================
 */
-void	CM_ReadPortalState (FILE *f)
+void	CM_ReadPortalState (int f)
 {
 	FS_Read (portalopen, sizeof(portalopen), f);
 	FloodAreaConnections ();
