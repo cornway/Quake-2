@@ -117,7 +117,7 @@ SV_CheckForSavegame
 void SV_CheckForSavegame (void)
 {
 	char		name[MAX_OSPATH];
-	FILE		*f;
+	int f;
 	int			i;
 
 	if (sv_noreload->value)
@@ -127,11 +127,11 @@ void SV_CheckForSavegame (void)
 		return;
 
 	Com_sprintf (name, sizeof(name), "%s/save/current/%s.sav", FS_Gamedir(), sv.name);
-	f = fopen (name, "rb");
-	if (!f)
+	d_open (name, &f, "r");
+	if (f < 0)
 		return;		// no savegame
 
-	fclose (f);
+	d_close (f);
 
 	SV_ClearWorld ();
 
@@ -177,8 +177,8 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 	Com_Printf ("------- Server Initialization -------\n");
 
 	Com_DPrintf ("SpawnServer: %s\n",server);
-	if (sv.demofile)
-		fclose (sv.demofile);
+	if (sv.demofile >= 0)
+		d_close (sv.demofile);
 
 	svs.spawncount++;		// any partially connected client will be
 							// restarted
@@ -186,7 +186,7 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 	Com_SetServerState (sv.state);
 
 	// wipe the entire per-level structure
-	memset (&sv, 0, sizeof(sv));
+	d_memset (&sv, 0, sizeof(sv));
 	svs.realtime = 0;
 	sv.loadgame = loadgame;
 	sv.attractloop = attractloop;
@@ -359,7 +359,11 @@ void SV_InitGame (void)
 
 	// heartbeats will always be sent to the id master
 	svs.last_heartbeat = -99999;		// send immediately
+#ifdef STM32
+    Com_sprintf(idmaster, sizeof(idmaster), "localhost");
+#else
 	Com_sprintf(idmaster, sizeof(idmaster), "192.246.40.37:%i", PORT_MASTER);
+#endif
 	NET_StringToAdr (idmaster, &master_adr[0]);
 
 	// init game
@@ -369,7 +373,7 @@ void SV_InitGame (void)
 		ent = EDICT_NUM(i+1);
 		ent->s.number = i+1;
 		svs.clients[i].edict = ent;
-		memset (&svs.clients[i].lastcmd, 0, sizeof(svs.clients[i].lastcmd));
+		d_memset (&svs.clients[i].lastcmd, 0, sizeof(svs.clients[i].lastcmd));
 	}
 }
 

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // common.c -- misc functions used in client and server
 #include "qcommon.h"
 #include <setjmp.h>
+#include <debug.h>
 
 #define	MAXPRINTMSG	4096
 
@@ -50,7 +51,7 @@ cvar_t	*logfile_active;	// 1 = buffer log, 2 = flush after each print
 cvar_t	*showtrace;
 extern cvar_t	*dedicated;
 
-FILE	*logfile;
+int logfile;
 
 int			server_state;
 
@@ -133,15 +134,17 @@ void Com_Printf (char *fmt, ...)
 	{
 		char	name[MAX_QPATH];
 		
-		if (!logfile)
+		if (logfile < 0)
 		{
 			Com_sprintf (name, sizeof(name), "%s/qconsole.log", FS_Gamedir ());
-			logfile = fopen (name, "w");
+			d_open (name, &logfile, "w");
 		}
-		if (logfile)
-			fprintf (logfile, "%s", msg);
+		if (logfile >= 0)
+			d_printf (logfile, "%s", msg);
+#ifndef STM32
 		if (logfile_active->value > 1)
 			fflush (logfile);		// force it to save every time
+#endif
 	}
 }
 
@@ -211,10 +214,10 @@ void Com_Error (int code, char *fmt, ...)
 		CL_Shutdown ();
 	}
 
-	if (logfile)
+	if (logfile >= 0)
 	{
-		fclose (logfile);
-		logfile = NULL;
+		d_close (logfile);
+		logfile = -1;
 	}
 
 	Sys_Error ("%s", msg);
@@ -234,10 +237,10 @@ void Com_Quit (void)
 	SV_Shutdown ("Server quit\n", false);
 	CL_Shutdown ();
 
-	if (logfile)
+	if (logfile >= 0)
 	{
-		fclose (logfile);
-		logfile = NULL;
+		d_close (logfile);
+		logfile = -1;
 	}
 
 	Sys_Quit ();
@@ -916,7 +919,7 @@ void *SZ_GetSpace (sizebuf_t *buf, int length)
 
 void SZ_Write (sizebuf_t *buf, void *data, int length)
 {
-	memcpy (SZ_GetSpace(buf,length),data,length);		
+	d_memcpy (SZ_GetSpace(buf,length),data,length);		
 }
 
 void SZ_Print (sizebuf_t *buf, char *data)
@@ -1170,10 +1173,10 @@ void *Z_TagMalloc (int size, int tag)
 	zhead_t	*z;
 	
 	size = size + sizeof(zhead_t);
-	z = malloc(size);
+	z = heap_malloc(size);
 	if (!z)
 		Com_Error (ERR_FATAL, "Z_Malloc: failed on allocation of %i bytes",size);
-	memset (z, 0, size);
+	d_memset (z, 0, size);
 	z_count++;
 	z_bytes += size;
 	z->magic = Z_MAGIC;
@@ -1484,6 +1487,8 @@ void Qcommon_Init (int argc, char **argv)
 		// so drop the loading plaque
 		SCR_EndLoadingPlaque ();
 	}
+
+    SCR_InitCinematic();
 
 	Com_Printf ("====== Quake2 Initialized ======\n\n");	
 }

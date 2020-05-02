@@ -237,7 +237,7 @@ SV_WriteIP_f
 */
 void SVCmd_WriteIP_f (void)
 {
-	FILE	*f;
+	int f;
 	char	name[MAX_OSPATH];
 	byte	b[4];
 	int		i;
@@ -252,22 +252,22 @@ void SVCmd_WriteIP_f (void)
 
 	gi.cprintf (NULL, PRINT_HIGH, "Writing %s.\n", name);
 
-	f = fopen (name, "wb");
-	if (!f)
+	d_open (name, &f, "wb");
+	if (f < 0)
 	{
 		gi.cprintf (NULL, PRINT_HIGH, "Couldn't open %s\n", name);
 		return;
 	}
 	
-	fprintf(f, "set filterban %d\n", (int)filterban->value);
+	d_printf(f, "set filterban %d\n", (int)filterban->value);
 
 	for (i=0 ; i<numipfilters ; i++)
 	{
 		*(unsigned *)b = ipfilters[i].compare;
-		fprintf (f, "sv addip %i.%i.%i.%i\n", b[0], b[1], b[2], b[3]);
+		d_printf (f, "sv addip %i.%i.%i.%i\n", b[0], b[1], b[2], b[3]);
 	}
 	
-	fclose (f);
+	d_close (f);
 }
 
 /*

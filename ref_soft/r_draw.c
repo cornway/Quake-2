@@ -192,7 +192,7 @@ void Draw_StretchPicImplementation (int x, int y, int w, int h, image_t	*pic)
 		sv = (skip + v)*pic->height/h;
 		source = pic->pixels[0] + sv*pic->width;
 		if (w == pic->width)
-			memcpy (dest, source, w);
+			d_memcpy (dest, source, w);
 		else
 		{
 			f = 0;

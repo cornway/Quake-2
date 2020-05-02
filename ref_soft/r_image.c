@@ -132,7 +132,7 @@ void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *heigh
 		return;
 	}
 
-	out = malloc ( (pcx->ymax+1) * (pcx->xmax+1) );
+	out = heap_malloc( (pcx->ymax+1) * (pcx->xmax+1) );
 
 	*pic = out;
 
@@ -140,8 +140,8 @@ void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *heigh
 
 	if (palette)
 	{
-		*palette = malloc(768);
-		memcpy (*palette, (byte *)pcx + len - 768, 768);
+		*palette = heap_malloc(768);
+		d_memcpy (*palette, (byte *)pcx + len - 768, 768);
 	}
 
 	if (width)
@@ -172,7 +172,7 @@ void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *heigh
 	if ( raw - (byte *)pcx > len)
 	{
 		ri.Con_Printf (PRINT_DEVELOPER, "PCX file %s was malformed", filename);
-		free (*pic);
+		heap_free (*pic);
 		*pic = NULL;
 	}
 

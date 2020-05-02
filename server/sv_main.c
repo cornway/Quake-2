@@ -1039,9 +1039,9 @@ void SV_Shutdown (char *finalmsg, qboolean reconnect)
 	SV_ShutdownGameProgs ();
 
 	// free current level
-	if (sv.demofile)
-		fclose (sv.demofile);
-	memset (&sv, 0, sizeof(sv));
+	if (sv.demofile >= 0)
+		d_close (sv.demofile);
+	d_memset (&sv, 0, sizeof(sv));
 	Com_SetServerState (sv.state);
 
 	// free server static data
@@ -1049,8 +1049,8 @@ void SV_Shutdown (char *finalmsg, qboolean reconnect)
 		Z_Free (svs.clients);
 	if (svs.client_entities)
 		Z_Free (svs.client_entities);
-	if (svs.demofile)
-		fclose (svs.demofile);
-	memset (&svs, 0, sizeof(svs));
+	if (svs.demofile >= 0)
+		d_close (svs.demofile);
+	d_memset (&svs, 0, sizeof(svs));
 }
 

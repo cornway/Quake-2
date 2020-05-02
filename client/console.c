@@ -144,7 +144,7 @@ void Con_Dump_f (void)
 {
 	int		l, x;
 	char	*line;
-	FILE	*f;
+	int     f;
 	char	buffer[1024];
 	char	name[MAX_OSPATH];
 
@@ -158,8 +158,8 @@ void Con_Dump_f (void)
 
 	Com_Printf ("Dumped console text to %s.\n", name);
 	FS_CreatePath (name);
-	f = fopen (name, "w");
-	if (!f)
+	d_open (name, &f, "w");
+	if (f < 0)
 	{
 		Com_Printf ("ERROR: couldn't open.\n");
 		return;
@@ -192,10 +192,10 @@ void Con_Dump_f (void)
 		for (x=0; buffer[x]; x++)
 			buffer[x] &= 0x7f;
 
-		fprintf (f, "%s\n", buffer);
+		d_printf (f, "%s\n", buffer);
 	}
 
-	fclose (f);
+	d_close (f);
 }
 
 						

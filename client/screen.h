@@ -54,6 +54,7 @@ void SCR_DirtyScreen (void);
 //
 // scr_cin.c
 //
+void SCR_InitCinematic         (void);
 void SCR_PlayCinematic (char *name);
 qboolean SCR_DrawCinematic (void);
 void SCR_RunCinematic (void);

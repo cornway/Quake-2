@@ -439,10 +439,10 @@ SV_DemoCompleted
 */
 void SV_DemoCompleted (void)
 {
-	if (sv.demofile)
+	if (sv.demofile >= 0)
 	{
-		fclose (sv.demofile);
-		sv.demofile = NULL;
+		d_close (sv.demofile);
+		sv.demofile = -1;
 	}
 	SV_Nextserver ();
 }
@@ -498,15 +498,15 @@ void SV_SendClientMessages (void)
 	msglen = 0;
 
 	// read the next demo message if needed
-	if (sv.state == ss_demo && sv.demofile)
+	if (sv.state == ss_demo && sv.demofile >= 0)
 	{
 		if (sv_paused->value)
 			msglen = 0;
 		else
 		{
 			// get the next message
-			r = fread (&msglen, 4, 1, sv.demofile);
-			if (r != 1)
+			r = d_read (sv.demofile, &msglen, 4);
+			if (r < 0)
 			{
 				SV_DemoCompleted ();
 				return;
@@ -519,8 +519,8 @@ void SV_SendClientMessages (void)
 			}
 			if (msglen > MAX_MSGLEN)
 				Com_Error (ERR_DROP, "SV_SendClientMessages: msglen > MAX_MSGLEN");
-			r = fread (msgbuf, msglen, 1, sv.demofile);
-			if (r != 1)
+			r = d_read (sv.demofile, msgbuf, msglen);
+			if (r < 0)
 			{
 				SV_DemoCompleted ();
 				return;

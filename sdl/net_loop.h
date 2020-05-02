@@ -32,5 +32,3 @@ qboolean	Loop_CanSendUnreliableMessage (qsocket_t *sock);
 void		Loop_Close (qsocket_t *sock);
 void		Loop_Shutdown (void);
 
-#define ntohs(x) ((uint16_t)((uint8_t *)(&x)[1] | ((uint8_t *)(&x)[0] << 8)))
-

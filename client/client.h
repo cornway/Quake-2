@@ -42,6 +42,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <audio_main.h>
 #include <input_main.h>
 #include <heap.h>
+#include <debug.h>
 
 //=============================================================================
 
@@ -146,7 +147,7 @@ typedef struct
 	//
 	// non-gameserver infornamtion
 	// FIXME: move this cinematic stuff into the cin_t structure
-	FILE		*cinematic_file;
+	int		    cinematic_file;
 	int			cinematictime;		// cls.realtime for first cinematic frame
 	int			cinematicframe;
 	char		cinematicpalette[768];
@@ -241,7 +242,7 @@ typedef struct
 // demo recording info must be here, so it isn't cleared on level change
 	qboolean	demorecording;
 	qboolean	demowaiting;	// don't record until a non-delta message is received
-	FILE		*demofile;
+	int		    demofile;
 } client_static_t;
 
 extern client_static_t	cls;

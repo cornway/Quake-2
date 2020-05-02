@@ -147,6 +147,16 @@ void SCR_LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *h
 
 /*
 ==================
+SCR_InitCinematic
+==================
+*/
+void SCR_InitCinematic         (void)
+{
+    cl.cinematic_file = -1;
+}
+
+/*
+==================
 SCR_StopCinematic
 ==================
 */
@@ -168,10 +178,10 @@ void SCR_StopCinematic (void)
 		re.CinematicSetPalette(NULL);
 		cl.cinematicpalette_active = false;
 	}
-	if (cl.cinematic_file)
+	if (cl.cinematic_file >= 0)
 	{
-		fclose (cl.cinematic_file);
-		cl.cinematic_file = NULL;
+		d_close (cl.cinematic_file);
+		cl.cinematic_file = -1;
 	}
 	if (cin.hnodes1)
 	{
@@ -436,11 +446,11 @@ byte *SCR_ReadNextFrame (void)
 	int		start, end, count;
 
 	// read the next frame
-	r = fread (&command, 4, 1, cl.cinematic_file);
-	if (r == 0)		// we'll give it one more chance
-		r = fread (&command, 4, 1, cl.cinematic_file);
+	r = d_read (cl.cinematic_file, &command, 4);
+	if (r < 0)		// we'll give it one more chance
+		r = d_read (cl.cinematic_file, &command, 4);
 
-	if (r != 1)
+	if (r < 0)
 		return NULL;
 	command = LittleLong(command);
 	if (command == 2)
@@ -585,7 +595,7 @@ void SCR_PlayCinematic (char *arg)
 
 	cl.cinematicframe = 0;
 	dot = strstr (arg, ".");
-	if (dot && !strcmp (dot, ".pcx"))
+	if (dot && !d_strcmp (dot, ".pcx"))
 	{	// static pcx image
 		Com_sprintf (name, sizeof(name), "pics/%s", arg);
 		SCR_LoadPCX (name, &cin.pic, &palette, &cin.width, &cin.height);
@@ -608,7 +618,7 @@ void SCR_PlayCinematic (char *arg)
 
 	Com_sprintf (name, sizeof(name), "video/%s", arg);
 	FS_FOpenFile (name, &cl.cinematic_file);
-	if (!cl.cinematic_file)
+	if (cl.cinematic_file < 0)
 	{
 //		Com_Error (ERR_DROP, "Cinematic %s not found.\n", name);
 		SCR_FinishCinematic ();

@@ -43,7 +43,7 @@ void SV_BeginDemoserver (void)
 
 	Com_sprintf (name, sizeof(name), "demos/%s", sv.name);
 	FS_FOpenFile (name, &sv.demofile);
-	if (!sv.demofile)
+	if (sv.demofile < 0)
 		Com_Error (ERR_DROP, "Couldn't open %s\n", name);
 }
 

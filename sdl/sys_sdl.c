@@ -19,6 +19,9 @@
 #include <debug.h>
 #include <bsp_cmd.h>
 #include <bsp_sys.h>
+
+#include "rw_sdl.h"
+
 #include "begin_code.h"
 
 qboolean        isDedicated;
@@ -415,6 +418,16 @@ extern void *Sys_HeapCachePop (int size) /*alloc*/
     return (void *)ptr;
 }
 
+/*
+================
+Sys_ConsoleInput
+================
+*/
+char *Sys_ConsoleInput (void)
+{
+    return 0;
+}
+
 unsigned	sys_frame_time;
 
 int curtime;
@@ -426,6 +439,16 @@ int Sys_Milliseconds (void)
 
 void Sys_AppActivate (void)
 {
+}
+
+void Sys_SendKeyEvents (void)
+{
+#ifndef DEDICATED_ONLY
+	if (KBD_Update_fp)
+		KBD_Update_fp();
+#endif
+	// grab frame time 
+	sys_frame_time = Sys_Milliseconds();
 }
 
 char *Sys_GetClipboardData(void)

@@ -430,18 +430,21 @@ void Cvar_WriteVariables (char *path)
 {
 	cvar_t	*var;
 	char	buffer[1024];
-	FILE	*f;
+	int	 f;
 
-	f = fopen (path, "a");
+	d_open (path, &f, "w");
+    if (f < 0) {
+        return;
+    }
 	for (var = cvar_vars ; var ; var = var->next)
 	{
 		if (var->flags & CVAR_ARCHIVE)
 		{
 			Com_sprintf (buffer, sizeof(buffer), "set %s \"%s\"\n", var->name, var->string);
-			fprintf (f, "%s", buffer);
+			d_printf (f, "%s", buffer);
 		}
 	}
-	fclose (f);
+	d_close (f);
 }
 
 /*

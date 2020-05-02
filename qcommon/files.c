@@ -53,7 +53,7 @@ typedef struct
 typedef struct pack_s
 {
 	char	filename[MAX_OSPATH];
-	FILE	*handle;
+	int     handle;
 	int		numfiles;
 	packfile_t	*files;
 } pack_t;
@@ -245,10 +245,10 @@ int FS_FOpenFile (char *filename, int *file)
 					file_from_pak = 1;
 					Com_DPrintf ("PackFile: %s : %s\n",pak->filename, filename);
 				// open a new file on the pakfile
-					*file = fopen (pak->filename, "rb");
-					if (!*file)
+					d_open (pak->filename, file, "r");
+					if (*file < 0)
 						Com_Error (ERR_FATAL, "Couldn't reopen %s", pak->filename);	
-					fseek (*file, pak->files[i].filepos, SEEK_SET);
+					d_seek (*file, pak->files[i].filepos, DSEEK_SET);
 					return pak->files[i].filelen;
 				}
 		}
@@ -258,8 +258,8 @@ int FS_FOpenFile (char *filename, int *file)
 			
 			Com_sprintf (netpath, sizeof(netpath), "%s/%s",search->filename, filename);
 			
-			*file = fopen (netpath, "rb");
-			if (!*file)
+			d_open (netpath, file, "r");
+			if (*file < 0)
 				continue;
 			
 			Com_DPrintf ("FindFile: %s\n",netpath);
@@ -271,7 +271,7 @@ int FS_FOpenFile (char *filename, int *file)
 	
 	Com_DPrintf ("FindFile: can't find %s\n", filename);
 	
-	*file = NULL;
+	*file = -1;
 	return -1;
 }
 
@@ -279,7 +279,7 @@ int FS_FOpenFile (char *filename, int *file)
 
 // this is just for demos to prevent add on hacking
 
-int FS_FOpenFile (char *filename, FILE **file)
+int FS_FOpenFile (char *filename, int *file)
 {
 	searchpath_t	*search;
 	char			netpath[MAX_OSPATH];
@@ -293,8 +293,8 @@ int FS_FOpenFile (char *filename, FILE **file)
 	{
 		Com_sprintf (netpath, sizeof(netpath), "%s/%s",FS_Gamedir(), filename);
 		
-		*file = fopen (netpath, "rb");
-		if (!*file)
+		d_open (netpath, file, "rb");
+		if (*file < 0)
 			return -1;
 		
 		Com_DPrintf ("FindFile: %s\n",netpath);
@@ -318,16 +318,16 @@ int FS_FOpenFile (char *filename, FILE **file)
 			file_from_pak = 1;
 			Com_DPrintf ("PackFile: %s : %s\n",pak->filename, filename);
 		// open a new file on the pakfile
-			*file = fopen (pak->filename, "rb");
-			if (!*file)
+			d_open (pak->filename, file, "rb");
+			if (*file < 0)
 				Com_Error (ERR_FATAL, "Couldn't reopen %s", pak->filename);	
-			fseek (*file, pak->files[i].filepos, SEEK_SET);
+			d_seek (*file, pak->files[i].filepos, DSEEK_SET);
 			return pak->files[i].filelen;
 		}
 	
 	Com_DPrintf ("FindFile: can't find %s\n", filename);
 	
-	*file = NULL;
+	*file = -1;
 	return -1;
 }
 
@@ -393,7 +393,7 @@ a null buffer will just return the file length without loading
 */
 int FS_LoadFile (char *path, void **buffer)
 {
-	FILE	*h;
+	int h;
 	byte	*buf;
 	int		len;
 
@@ -401,7 +401,7 @@ int FS_LoadFile (char *path, void **buffer)
 
 // look for it in the filesystem or pack files
 	len = FS_FOpenFile (path, &h);
-	if (!h)
+	if (h < 0)
 	{
 		if (buffer)
 			*buffer = NULL;
@@ -410,7 +410,7 @@ int FS_LoadFile (char *path, void **buffer)
 	
 	if (!buffer)
 	{
-		fclose (h);
+		d_close (h);
 		return len;
 	}
 
@@ -419,7 +419,7 @@ int FS_LoadFile (char *path, void **buffer)
 
 	FS_Read (buf, len, h);
 
-	fclose (h);
+	d_close (h);
 
 	return len;
 }
@@ -452,15 +452,15 @@ pack_t *FS_LoadPackFile (char *packfile)
 	packfile_t		*newfiles;
 	int				numpackfiles;
 	pack_t			*pack;
-	FILE			*packhandle;
-	dpackfile_t		info[MAX_FILES_IN_PACK];
+	int			    packhandle;
+	dpackfile_t		*info;
 	unsigned		checksum;
 
-	packhandle = fopen(packfile, "rb");
-	if (!packhandle)
+	d_open(packfile, &packhandle, "r");
+	if (packhandle < 0)
 		return NULL;
 
-	fread (&header, 1, sizeof(header), packhandle);
+	d_read (packhandle, &header, sizeof(header));
 	if (LittleLong(header.ident) != IDPAKHEADER)
 		Com_Error (ERR_FATAL, "%s is not a packfile", packfile);
 	header.dirofs = LittleLong (header.dirofs);
@@ -472,9 +472,13 @@ pack_t *FS_LoadPackFile (char *packfile)
 		Com_Error (ERR_FATAL, "%s has %i files", packfile, numpackfiles);
 
 	newfiles = Z_Malloc (numpackfiles * sizeof(packfile_t));
+    info = heap_malloc(sizeof(*info) * MAX_FILES_IN_PACK);
+    if (!info) {
+        Com_Error (ERR_FATAL, "No memory");
+    }
 
-	fseek (packhandle, header.dirofs, SEEK_SET);
-	fread (info, 1, header.dirlen, packhandle);
+	d_seek (packhandle, header.dirofs, DSEEK_SET);
+	d_read (packhandle, info, header.dirlen);
 
 // crc the directory to check for modifications
 	checksum = Com_BlockChecksum ((void *)info, header.dirlen);
@@ -498,6 +502,8 @@ pack_t *FS_LoadPackFile (char *packfile)
 	pack->files = newfiles;
 	
 	Com_Printf ("Added packfile %s (%i files)\n", packfile, numpackfiles);
+
+    heap_free(info);
 	return pack;
 }
 
@@ -603,7 +609,7 @@ void FS_SetGamedir (char *dir)
 	{
 		if (fs_searchpaths->pack)
 		{
-			fclose (fs_searchpaths->pack->handle);
+			d_close (fs_searchpaths->pack->handle);
 			Z_Free (fs_searchpaths->pack->files);
 			Z_Free (fs_searchpaths->pack);
 		}

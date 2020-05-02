@@ -550,7 +550,7 @@ void WritePCXfile (char *filename, byte *data, int width, int height,
 	int			i, j, length;
 	pcx_t		*pcx;
 	byte		*pack;
-	FILE		*f;
+	int		     f;
 
 	pcx = (pcx_t *)malloc (width*height*2+1000);
 	if (!pcx)
@@ -566,11 +566,11 @@ void WritePCXfile (char *filename, byte *data, int width, int height,
 	pcx->ymax = LittleShort((short)(height-1));
 	pcx->hres = LittleShort((short)width);
 	pcx->vres = LittleShort((short)height);
-	memset (pcx->palette,0,sizeof(pcx->palette));
+	d_memset (pcx->palette,0,sizeof(pcx->palette));
 	pcx->color_planes = 1;		// chunky image
 	pcx->bytes_per_line = LittleShort((short)width);
 	pcx->palette_type = LittleShort(2);		// not a grey scale
-	memset (pcx->filler,0,sizeof(pcx->filler));
+	d_memset (pcx->filler,0,sizeof(pcx->filler));
 
 // pack the image
 	pack = &pcx->data;
@@ -598,16 +598,16 @@ void WritePCXfile (char *filename, byte *data, int width, int height,
 		
 // write output file 
 	length = pack - (byte *)pcx;
-	f = fopen (filename, "wb");
+	d_open (filename, &f, "+w");
 	if (!f)
 		ri.Con_Printf (PRINT_ALL, "Failed to open to %s\n", filename);
 	else
 	{
-		fwrite ((void *)pcx, 1, length, f);
-		fclose (f);
+		d_write (f, (void *)pcx, length);
+		d_close (f);
 	}
 
-	free (pcx);
+	heap_free(pcx);
 } 
  
 
@@ -622,7 +622,7 @@ void R_ScreenShot_f (void)
 	int			i; 
 	char		pcxname[80]; 
 	char		checkname[MAX_OSPATH];
-	FILE		*f;
+	int         f;
 	byte		palette[768];
 
 	// create the scrnshots directory if it doesn't exist
@@ -639,10 +639,10 @@ void R_ScreenShot_f (void)
 		pcxname[5] = i/10 + '0'; 
 		pcxname[6] = i%10 + '0'; 
 		Com_sprintf (checkname, sizeof(checkname), "%s/scrnshot/%s", ri.FS_Gamedir(), pcxname);
-		f = fopen (checkname, "r");
-		if (!f)
+		d_open (checkname, &f, "r");
+		if (f < 0)
 			break;	// file doesn't exist
-		fclose (f);
+		d_close (f);
 	} 
 	if (i==100) 
 	{

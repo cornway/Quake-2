@@ -2046,14 +2046,14 @@ qboolean	m_savevalid[MAX_SAVEGAMES];
 void Create_Savestrings (void)
 {
 	int		i;
-	FILE	*f;
+	int     f;
 	char	name[MAX_OSPATH];
 
 	for (i=0 ; i<MAX_SAVEGAMES ; i++)
 	{
 		Com_sprintf (name, sizeof(name), "%s/save/save%i/server.ssv", FS_Gamedir(), i);
-		f = fopen (name, "rb");
-		if (!f)
+		d_open (name, &f, "r");
+		if (f < 0)
 		{
 			strcpy (m_savestrings[i], "<EMPTY>");
 			m_savevalid[i] = false;
@@ -2061,7 +2061,7 @@ void Create_Savestrings (void)
 		else
 		{
 			FS_Read (m_savestrings[i], sizeof(m_savestrings[i]), f);
-			fclose (f);
+			d_close (f);
 			m_savevalid[i] = true;
 		}
 	}
@@ -2549,8 +2549,8 @@ void StartServer_MenuInit( void )
 		length = d_tell(fp);
 		d_seek(fp, 0, DSEEK_SET);
 #endif
-		buffer = malloc( length );
-		fread( buffer, length, 1, fp );
+		buffer = heap_malloc( length );
+		d_read( fp, buffer, length);
 	}
 
 	s = buffer;

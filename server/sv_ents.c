@@ -689,7 +689,7 @@ void SV_RecordDemoMessage (void)
 	if (!svs.demofile)
 		return;
 
-	memset (&nostate, 0, sizeof(nostate));
+	d_memset (&nostate, 0, sizeof(nostate));
 	SZ_Init (&buf, buf_data, sizeof(buf_data));
 
 	// write a frame message that doesn't contain a player_state_t
@@ -721,7 +721,7 @@ void SV_RecordDemoMessage (void)
 
 	// now write the entire message to the file, prefixed by the length
 	len = LittleLong (buf.cursize);
-	fwrite (&len, 4, 1, svs.demofile);
-	fwrite (buf.data, buf.cursize, 1, svs.demofile);
+	d_write (svs.demofile, &len, 4);
+	d_write (svs.demofile, buf.data, buf.cursize);
 }
 

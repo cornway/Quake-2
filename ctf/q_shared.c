@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 #include "q_shared.h"
+#include <debug.h>
 
 #define DEG2RAD( a ) ( a * M_PI ) / 180.0F
 
