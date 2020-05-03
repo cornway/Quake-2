@@ -401,7 +401,7 @@ void R_InitCaches (void)
 	ri.Con_Printf (PRINT_ALL,"%ik surface cache\n", size/1024);
 
 	sc_size = size;
-	sc_base = (surfcache_t *)malloc(size);
+	sc_base = (surfcache_t *)heap_malloc(size);
 	sc_rover = sc_base;
 	
 	sc_base->next = NULL;

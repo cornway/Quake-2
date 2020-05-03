@@ -459,7 +459,7 @@ char *Sys_GetClipboardData(void)
 static	char	findbase[MAX_OSPATH];
 static	char	findpath[MAX_OSPATH];
 static	char	findpattern[MAX_OSPATH];
-static	int fdir;
+static	int fdir = -1;
 
 void Sys_FindClose (void)
 {

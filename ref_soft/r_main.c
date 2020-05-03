@@ -351,21 +351,21 @@ void R_Shutdown (void)
 	// free z buffer
 	if (d_pzbuffer)
 	{
-		free (d_pzbuffer);
+		heap_free (d_pzbuffer);
 		d_pzbuffer = NULL;
 	}
 	// free surface cache
 	if (sc_base)
 	{
 		D_FlushCaches ();
-		free (sc_base);
+		heap_free (sc_base);
 		sc_base = NULL;
 	}
 
 	// free colormap
 	if (vid.colormap)
 	{
-		free (vid.colormap);
+		heap_free (vid.colormap);
 		vid.colormap = NULL;
 	}
 	R_UnRegister ();
@@ -391,7 +391,7 @@ void R_NewMap (void)
 
 	if (r_cnumsurfs > NUMSTACKSURFACES)
 	{
-		surfaces = malloc (r_cnumsurfs * sizeof(surf_t));
+		surfaces = heap_malloc (r_cnumsurfs * sizeof(surf_t));
 		surface_p = surfaces;
 		surf_max = &surfaces[r_cnumsurfs];
 		r_surfsonstack = false;
@@ -419,7 +419,7 @@ void R_NewMap (void)
 	}
 	else
 	{
-		auxedges = malloc (r_numallocatededges * sizeof(edge_t));
+		auxedges = heap_malloc (r_numallocatededges * sizeof(edge_t));
 	}
 }
 
@@ -1074,7 +1074,7 @@ void R_InitGraphics( int width, int height )
 	// free z buffer
 	if ( d_pzbuffer )
 	{
-		free( d_pzbuffer );
+		heap_free( d_pzbuffer );
 		d_pzbuffer = NULL;
 	}
 
@@ -1082,11 +1082,11 @@ void R_InitGraphics( int width, int height )
 	if ( sc_base )
 	{
 		D_FlushCaches ();
-		free( sc_base );
+		heap_free( sc_base );
 		sc_base = NULL;
 	}
 
-	d_pzbuffer = malloc(vid.width*vid.height*2);
+	d_pzbuffer = heap_malloc(vid.width*vid.height*2);
 
 	R_InitCaches ();
 

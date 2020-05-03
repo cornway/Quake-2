@@ -177,8 +177,9 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 	Com_Printf ("------- Server Initialization -------\n");
 
 	Com_DPrintf ("SpawnServer: %s\n",server);
-	if (sv.demofile >= 0)
-		d_close (sv.demofile);
+	if (sv.demofile >= 0) {
+        d_close (sv.demofile);
+    }
 
 	svs.spawncount++;		// any partially connected client will be
 							// restarted
@@ -187,6 +188,7 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 
 	// wipe the entire per-level structure
 	d_memset (&sv, 0, sizeof(sv));
+    sv.demofile = -1;
 	svs.realtime = 0;
 	sv.loadgame = loadgame;
 	sv.attractloop = attractloop;

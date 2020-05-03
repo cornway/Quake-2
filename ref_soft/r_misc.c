@@ -552,7 +552,7 @@ void WritePCXfile (char *filename, byte *data, int width, int height,
 	byte		*pack;
 	int		     f;
 
-	pcx = (pcx_t *)malloc (width*height*2+1000);
+	pcx = (pcx_t *)heap_malloc (width*height*2+1000);
 	if (!pcx)
 		return;
 

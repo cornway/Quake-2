@@ -230,7 +230,7 @@ void Cbuf_Execute (void)
 		{
 			i++;
 			cmd_text.cursize -= i;
-			memmove (text, text+i, cmd_text.cursize);
+			d_memcpy (text, text+i, cmd_text.cursize);
 		}
 
 // execute the command line

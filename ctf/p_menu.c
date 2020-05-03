@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 #include "g_local.h"
+#include <heap.h>
 
 // Note that the pmenu entries are duplicated
 // this is so that a static set of pmenu entries can be used
@@ -37,11 +38,11 @@ pmenuhnd_t *PMenu_Open(edict_t *ent, pmenu_t *entries, int cur, int num, void *a
 		PMenu_Close(ent);
 	}
 
-	hnd = malloc(sizeof(*hnd));
+	hnd = heap_malloc(sizeof(*hnd));
 
 	hnd->arg = arg;
 	hnd->entries = malloc(sizeof(pmenu_t) * num);
-	memcpy(hnd->entries, entries, sizeof(pmenu_t) * num);
+	d_memcpy(hnd->entries, entries, sizeof(pmenu_t) * num);
 	// duplicate the strings since they may be from static memory
 	for (i = 0; i < num; i++)
 		if (entries[i].text)
@@ -82,11 +83,11 @@ void PMenu_Close(edict_t *ent)
 	hnd = ent->client->menu;
 	for (i = 0; i < hnd->num; i++)
 		if (hnd->entries[i].text)
-			free(hnd->entries[i].text);
-	free(hnd->entries);
+			heap_free(hnd->entries[i].text);
+	heap_free(hnd->entries);
 	if (hnd->arg)
-		free(hnd->arg);
-	free(hnd);
+		heap_free(hnd->arg);
+	heap_free(hnd);
 	ent->client->menu = NULL;
 	ent->client->showscores = false;
 }
@@ -95,7 +96,7 @@ void PMenu_Close(edict_t *ent)
 void PMenu_UpdateEntry(pmenu_t *entry, const char *text, int align, SelectFunc_t SelectFunc)
 {
 	if (entry->text)
-		free(entry->text);
+		heap_free(entry->text);
 	entry->text = d_strdup(text);
 	entry->align = align;
 	entry->SelectFunc = SelectFunc;

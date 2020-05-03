@@ -711,8 +711,8 @@ char **FS_ListFiles( char *findname, int *numfiles, unsigned musthave, unsigned 
 	nfiles++; // add space for a guard
 	*numfiles = nfiles;
 
-	list = malloc( sizeof( char * ) * nfiles );
-	memset( list, 0, sizeof( char * ) * nfiles );
+	list = heap_malloc( sizeof( char * ) * nfiles );
+	d_memset( list, 0, sizeof( char * ) * nfiles );
 
 	s = Sys_FindFirst( findname, musthave, canthave );
 	nfiles = 0;
@@ -775,9 +775,9 @@ void FS_Dir_f( void )
 				else
 					Com_Printf( "%s\n", dirnames[i] );
 
-				free( dirnames[i] );
+				heap_free( dirnames[i] );
 			}
-			free( dirnames );
+			heap_free( dirnames );
 		}
 		Com_Printf( "\n" );
 	};

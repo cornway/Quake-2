@@ -261,7 +261,7 @@ void Key_Console (int key)
 				strcat( key_lines[edit_line], cbd );
 				key_linepos += i;
 			}
-			free( cbd );
+			heap_free( cbd );
 		}
 
 		return;

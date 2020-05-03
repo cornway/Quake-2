@@ -1132,7 +1132,7 @@ void Z_Free (void *ptr)
 
 	z_count--;
 	z_bytes -= z->size;
-	free (z);
+	heap_free (z);
 }
 
 

@@ -263,7 +263,7 @@ void LoadTGA (char *name, byte **pic, int *width, int *height)
 	if (height)
 		*height = rows;
 
-	targa_rgba = malloc (numPixels*4);
+	targa_rgba = heap_malloc (numPixels*4);
 	*pic = targa_rgba;
 
 	if (targa_header.id_length != 0)
@@ -427,7 +427,7 @@ image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t t
 	image->type = type;
 
 	c = width*height;
-	image->pixels[0] = malloc (c);
+	image->pixels[0] = heap_malloc (c);
 	image->transparent = false;
 	for (i=0 ; i<c ; i++)
 	{
@@ -467,7 +467,7 @@ image_t *R_LoadWal (char *name)
 	image->registration_sequence = registration_sequence;
 
 	size = image->width*image->height * (256+64+16+4)/256;
-	image->pixels[0] = malloc (size);
+	image->pixels[0] = heap_malloc (size);
 	image->pixels[1] = image->pixels[0] + image->width*image->height;
 	image->pixels[2] = image->pixels[1] + image->width*image->height/4;
 	image->pixels[3] = image->pixels[2] + image->width*image->height/16;
@@ -533,9 +533,9 @@ image_t	*R_FindImage (char *name, imagetype_t type)
 		return NULL;	// ri.Sys_Error (ERR_DROP, "R_FindImage: bad extension on: %s", name);
 
 	if (pic)
-		free(pic);
+		heap_free(pic);
 	if (palette)
-		free(palette);
+		heap_free(palette);
 
 	return image;
 }
@@ -578,8 +578,8 @@ void R_FreeUnusedImages (void)
 		if (image->type == it_pic)
 			continue;		// don't free pics
 		// free it
-		free (image->pixels[0]);	// the other mip levels just follow
-		memset (image, 0, sizeof(*image));
+		heap_free (image->pixels[0]);	// the other mip levels just follow
+		d_memset (image, 0, sizeof(*image));
 	}
 }
 
@@ -610,8 +610,8 @@ void	R_ShutdownImages (void)
 		if (!image->registration_sequence)
 			continue;		// free texture
 		// free it
-		free (image->pixels[0]);	// the other mip levels just follow
-		memset (image, 0, sizeof(*image));
+		heap_free (image->pixels[0]);	// the other mip levels just follow
+		d_memset (image, 0, sizeof(*image));
 	}
 }
 

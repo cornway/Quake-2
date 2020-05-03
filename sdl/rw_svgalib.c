@@ -68,8 +68,8 @@ void VID_PreConfig (void)
 
     conf.res_x = BASEWIDTH;
     conf.res_y = BASEHEIGHT;
-    conf.alloc.malloc = heap_alloc_shared;
-    conf.alloc.free = heap_free;
+    conf.alloc.malloc = heap_alloc_shared_ptr;
+    conf.alloc.free = heap_free_ptr;
     conf.colormode = GFX_COLOR_MODE_CLUT;
     conf.laynum = 2;
     conf.hwaccel = hwaccel;

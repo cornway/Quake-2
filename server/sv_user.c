@@ -595,7 +595,7 @@ void SV_ExecuteClientMessage (client_t *cl)
 				}
 			}
 
-			memset (&nullcmd, 0, sizeof(nullcmd));
+			d_memset (&nullcmd, 0, sizeof(nullcmd));
 			MSG_ReadDeltaUsercmd (&net_message, &nullcmd, &oldest);
 			MSG_ReadDeltaUsercmd (&net_message, &oldest, &oldcmd);
 			MSG_ReadDeltaUsercmd (&net_message, &oldcmd, &newcmd);

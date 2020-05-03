@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "m_player.h"
 
+#include <heap.h>
+
 typedef enum match_s {
 	MATCH_NONE,
 	MATCH_SETUP,
@@ -3954,11 +3956,11 @@ void CTFWarp(edict_t *ent)
 	if (token == NULL) {
 		gi.cprintf(ent, PRINT_HIGH, "Unknown CTF level.\n");
 		gi.cprintf(ent, PRINT_HIGH, "Available levels are: %s\n", warp_list->string);
-		free(mlist);
+		heap_free(mlist);
 		return;
 	}
 
-	free(mlist);
+	heap_free(mlist);
 
 
 	if (ent->client->resp.admin) {

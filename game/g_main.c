@@ -244,14 +244,14 @@ void EndDMLevel (void)
 						BeginIntermission (CreateTargetChangeLevel (f) );
 				} else
 					BeginIntermission (CreateTargetChangeLevel (t) );
-				free(s);
+				heap_free(s);
 				return;
 			}
 			if (!f)
 				f = t;
 			t = strtok(NULL, seps);
 		}
-		free(s);
+		heap_free(s);
 	}
 
 	if (level.nextmap[0]) // go to a specific map

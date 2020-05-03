@@ -1039,8 +1039,10 @@ void SV_Shutdown (char *finalmsg, qboolean reconnect)
 	SV_ShutdownGameProgs ();
 
 	// free current level
-	if (sv.demofile >= 0)
+	if (sv.demofile >= 0) {
 		d_close (sv.demofile);
+        sv.demofile - 1;
+    }
 	d_memset (&sv, 0, sizeof(sv));
 	Com_SetServerState (sv.state);
 

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 #include "g_local.h"
+#include <heap.h>
 
 game_locals_t	game;
 level_locals_t	level;
@@ -253,14 +254,14 @@ void EndDMLevel (void)
 						BeginIntermission (CreateTargetChangeLevel (f) );
 				} else
 					BeginIntermission (CreateTargetChangeLevel (t) );
-				free(s);
+				heap_free(s);
 				return;
 			}
 			if (!f)
 				f = t;
 			t = strtok(NULL, seps);
 		}
-		free(s);
+		heap_free(s);
 	}
 
 	if (level.nextmap[0]) // go to a specific map
