@@ -58,12 +58,30 @@ void Sys_Quit (void)
 	for (;;) {}
 }
 
+static char sys_input_buf[256] = {0}, *sys_input_bufp = NULL;
+static int Sys_InputHandler (int c, const char **v)
+{
+    int len = 0;
+    while (c-- && len < sizeof(sys_input_buf)) {
+        len += snprintf(sys_input_buf, sizeof(sys_input_buf) - len, "%s ", *v++);
+    }
+    if (len >= sizeof(sys_input_buf)) {
+        dprintf("%s() : Too long string\n", __func__);
+    }
+    if (len) {
+        sys_input_bufp = sys_input_buf;
+        dprintf("%s() : \"%s()\"\n", __func__, sys_input_bufp);
+    }
+    return 0;
+}
+
 void Sys_Init(void)
 {
 #if id386
 	Sys_SetFPCW();
 #endif
     cmd_register_i32(&con_dbglvl, "dbglvl");
+    cmd_register_func(Sys_InputHandler, "q2");
 }
 
 void SDL_Quit(void)
@@ -425,7 +443,11 @@ Sys_ConsoleInput
 */
 char *Sys_ConsoleInput (void)
 {
-    return 0;
+    char *bufp = sys_input_bufp;
+    if (sys_input_bufp) {
+        sys_input_bufp = NULL;
+    }
+    return bufp;
 }
 
 unsigned	sys_frame_time;

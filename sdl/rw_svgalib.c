@@ -22,6 +22,7 @@
 #include "sdl_video.h"
 #include <lcd_main.h>
 #include <bsp_sys.h>
+#include <heap.h>
 
 /*****************************************************************************/
 
