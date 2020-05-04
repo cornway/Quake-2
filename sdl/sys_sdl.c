@@ -63,8 +63,9 @@ static int Sys_InputHandler (int c, const char **v)
 {
     int len = 0;
     assert(c > 0);
-    while (--c && len < sizeof(sys_input_buf)) {
-        len += snprintf(sys_input_buf + len, sizeof(sys_input_buf) - len, "%s ", ++*v);
+    while (c-- && len < sizeof(sys_input_buf)) {
+        len += snprintf(sys_input_buf + len, sizeof(sys_input_buf) - len, "%s ", *v);
+        v++;
     }
     if (len >= sizeof(sys_input_buf)) {
         dprintf("%s() : Too long string \"%s...\"\n", __func__, sys_input_buf);
