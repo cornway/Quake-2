@@ -160,13 +160,15 @@ void Com_DPrintf (char *fmt, ...)
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
-		
-	if (!developer || !developer->value)
-		return;			// don't confuse non-developers with techie stuff...
 
 	va_start (argptr,fmt);
 	vsprintf (msg,fmt,argptr);
 	va_end (argptr);
+
+    dprintf("%s", msg);
+
+	if (!developer || !developer->value)
+		return;			// don't confuse non-developers with techie stuff...
 	
 	Com_Printf ("%s", msg);
 }
