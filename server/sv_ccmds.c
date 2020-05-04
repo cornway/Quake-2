@@ -161,15 +161,15 @@ void SV_WipeSavegame (char *savename)
 	Com_DPrintf("SV_WipeSaveGame(%s)\n", savename);
 
 	Com_sprintf (name, sizeof(name), "%s/save/%s/server.ssv", FS_Gamedir (), savename);
-	remove (name);
+	d_unlink (name);
 	Com_sprintf (name, sizeof(name), "%s/save/%s/game.ssv", FS_Gamedir (), savename);
-	remove (name);
+	d_unlink (name);
 
 	Com_sprintf (name, sizeof(name), "%s/save/%s/*.sav", FS_Gamedir (), savename);
 	s = Sys_FindFirst( name, 0, 0 );
 	while (s)
 	{
-		remove (s);
+		d_unlink (s);
 		s = Sys_FindNext( 0, 0 );
 	}
 	Sys_FindClose ();
@@ -177,7 +177,7 @@ void SV_WipeSavegame (char *savename)
 	s = Sys_FindFirst(name, 0, 0 );
 	while (s)
 	{
-		remove (s);
+		d_unlink (s);
 		s = Sys_FindNext( 0, 0 );
 	}
 	Sys_FindClose ();
@@ -197,11 +197,11 @@ void CopyFile (char *src, char *dst)
 
 	Com_DPrintf ("CopyFile (%s, %s)\n", src, dst);
 
-	d_open (src, &f1, "rb");
+	d_open (src, &f1, "r");
 	if (f1 < 0)
 		return;
-	d_open (dst, &f2, "wb");
-	if (!f2)
+	d_open (dst, &f2, "+w");
+	if (f2 < 0)
 	{
 		d_close (f1);
 		return;

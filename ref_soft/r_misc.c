@@ -599,7 +599,7 @@ void WritePCXfile (char *filename, byte *data, int width, int height,
 // write output file 
 	length = pack - (byte *)pcx;
 	d_open (filename, &f, "+w");
-	if (!f)
+	if (f < 0)
 		ri.Con_Printf (PRINT_ALL, "Failed to open to %s\n", filename);
 	else
 	{

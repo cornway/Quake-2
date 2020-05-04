@@ -2529,13 +2529,14 @@ void StartServer_MenuInit( void )
 	char *s;
 	int length;
 	int i;
-	int *fp;
+	int fp;
 
 	/*
 	** load the list of map names
 	*/
 	Com_sprintf( mapsname, sizeof( mapsname ), "%s/maps.lst", FS_Gamedir() );
-	if ( ( d_open( mapsname, &fp, "r" ) ) >= 0 )
+    d_open( mapsname, &fp, "r" );
+	if ( fp < 0 )
 	{
 		if ( ( length = FS_LoadFile( "maps.lst", ( void ** ) &buffer ) ) == -1 )
 			Com_Error( ERR_DROP, "couldn't find maps.lst\n" );

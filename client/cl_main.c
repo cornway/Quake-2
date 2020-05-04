@@ -1804,12 +1804,13 @@ void CL_Init (void)
 	
 	SCR_Init ();
 	cls.disable_screen = true;	// don't draw yet
+	cls.download = -1;
 
 	CDAudio_Init ();
 	CL_InitLocal ();
 	IN_Init ();
 
-	Cbuf_AddText ("exec autoexec.cfg\n");
+//	Cbuf_AddText ("exec autoexec.cfg\n");
 	FS_ExecAutoexec ();
 	Cbuf_Execute ();
 

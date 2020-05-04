@@ -220,10 +220,10 @@ int FS_FOpenFile (char *filename, int *file)
 		{
 			Com_sprintf (netpath, sizeof(netpath), "%s%s",link->to, filename+link->fromlength);
 			d_open (netpath, file, "r");
-			if (file >= 0)
+			if (*file >= 0)
 			{		
 				Com_DPrintf ("link file: %s\n",netpath);
-				return FS_filelength (file);
+				return FS_filelength (*file);
 			}
 			return -1;
 		}
@@ -307,7 +307,7 @@ int FS_FOpenFile (char *filename, int *file)
 			break;
 	if (!search)
 	{
-		*file = NULL;
+		*file = -1;
 		return -1;
 	}
 
@@ -318,7 +318,7 @@ int FS_FOpenFile (char *filename, int *file)
 			file_from_pak = 1;
 			Com_DPrintf ("PackFile: %s : %s\n",pak->filename, filename);
 		// open a new file on the pakfile
-			d_open (pak->filename, file, "rb");
+			d_open (pak->filename, file, "r");
 			if (*file < 0)
 				Com_Error (ERR_FATAL, "Couldn't reopen %s", pak->filename);	
 			d_seek (*file, pak->files[i].filepos, DSEEK_SET);
@@ -361,7 +361,7 @@ void FS_Read (void *buffer, int len, int f)
 		if (block > MAX_READ)
 			block = MAX_READ;
 		read = d_read (f, buf, block);
-		if (read == 0)
+		if (read < 0)
 		{
 			// we might have been trying to read from a CD
 			if (!tries)

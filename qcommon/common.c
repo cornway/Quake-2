@@ -40,7 +40,7 @@ int abortframe = -1;
 #define setjmp(a) 0
 #endif
 
-int log_stats_file;
+int log_stats_file = -1;
 
 cvar_t	*host_speeds;
 cvar_t	*log_stats;
@@ -1513,7 +1513,7 @@ void Qcommon_Frame (int msec)
 		log_stats->modified = false;
 		if ( log_stats->value )
 		{
-			if ( log_stats_file )
+			if ( log_stats_file >= 0 )
 			{
 				d_close( log_stats_file );
 				log_stats_file = -1;
@@ -1524,7 +1524,7 @@ void Qcommon_Frame (int msec)
 		}
 		else
 		{
-			if ( log_stats_file )
+			if ( log_stats_file >= 0 )
 			{
 				d_close( log_stats_file );
 				log_stats_file = -1;

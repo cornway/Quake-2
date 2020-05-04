@@ -506,7 +506,7 @@ void SV_SendClientMessages (void)
 		{
 			// get the next message
 			r = d_read (sv.demofile, &msglen, 4);
-			if (r < 0)
+			if (r <= 0)
 			{
 				SV_DemoCompleted ();
 				return;
@@ -520,7 +520,7 @@ void SV_SendClientMessages (void)
 			if (msglen > MAX_MSGLEN)
 				Com_Error (ERR_DROP, "SV_SendClientMessages: msglen > MAX_MSGLEN");
 			r = d_read (sv.demofile, msgbuf, msglen);
-			if (r < 0)
+			if (r <= 0)
 			{
 				SV_DemoCompleted ();
 				return;

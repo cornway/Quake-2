@@ -226,7 +226,7 @@ void CL_ParseDownload (void)
 
 		FS_CreatePath (name);
 
-	    d_open (name, &cls.download, "wb");
+	    d_open (name, &cls.download, "+w");
 		if (cls.download < 0)
 		{
 			net_message.readcount += size;
