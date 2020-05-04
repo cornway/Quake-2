@@ -24,7 +24,7 @@ void *Hunk_Begin (int maxsize)
 /* 	membase = mmap(0, maxhunksize, PROT_READ|PROT_WRITE,  */
 /* 		MAP_PRIVATE, -1, 0); */
 /* 	if ((membase == NULL) || (membase == MAP_FAILED)) */
-	membase = heap_malloc(maxhunksize);
+	membase = malloc(maxhunksize);
 	if (membase == NULL)
 		Com_Error(ERR_FATAL, "unable to virtual allocate %d bytes", maxsize);
 
