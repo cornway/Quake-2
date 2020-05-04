@@ -438,7 +438,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 	char		*com_token;
 
 	init = false;
-	memset (&st, 0, sizeof(st));
+	d_memset (&st, 0, sizeof(st));
 
 // go through all the dictionary pairs
 	while (1)
@@ -471,7 +471,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 	}
 
 	if (!init)
-		memset (ent, 0, sizeof(*ent));
+		d_memset (ent, 0, sizeof(*ent));
 
 	return data;
 }
@@ -557,8 +557,8 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 
 	gi.FreeTags (TAG_LEVEL);
 
-	memset (&level, 0, sizeof(level));
-	memset (g_edicts, 0, game.maxentities * sizeof (g_edicts[0]));
+	d_memset (&level, 0, sizeof(level));
+	d_memset (g_edicts, 0, game.maxentities * sizeof (g_edicts[0]));
 
 	strncpy (level.mapname, mapname, sizeof(level.mapname)-1);
 	strncpy (game.spawnpoint, spawnpoint, sizeof(game.spawnpoint)-1);

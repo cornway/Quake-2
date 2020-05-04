@@ -3645,7 +3645,7 @@ qboolean PlayerConfig_MenuInit( void )
 
 	qsort( s_pmi, s_numplayermodels, sizeof( s_pmi[0] ), pmicmpfnc );
 
-	memset( s_pmnames, 0, sizeof( s_pmnames ) );
+	d_memset( s_pmnames, 0, sizeof( s_pmnames ) );
 	for ( i = 0; i < s_numplayermodels; i++ )
 	{
 		s_pmnames[i] = s_pmi[i].displayname;
@@ -3770,7 +3770,7 @@ void PlayerConfig_MenuDraw( void )
 	refdef_t refdef;
 	char scratch[MAX_QPATH];
 
-	memset( &refdef, 0, sizeof( refdef ) );
+	d_memset( &refdef, 0, sizeof( refdef ) );
 
 	refdef.x = viddef.width / 2;
 	refdef.y = viddef.height / 2 - 72;
@@ -3786,7 +3786,7 @@ void PlayerConfig_MenuDraw( void )
 		int maxframe = 29;
 		entity_t entity;
 
-		memset( &entity, 0, sizeof( entity ) );
+		d_memset( &entity, 0, sizeof( entity ) );
 
 		Com_sprintf( scratch, sizeof( scratch ), "players/%s/tris.md2", s_pmi[s_player_model_box.curvalue].directory );
 		entity.model = re.RegisterModel( scratch );

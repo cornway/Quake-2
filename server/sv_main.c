@@ -332,7 +332,7 @@ void SVC_DirectConnect (void)
 	}
 
 	newcl = &temp;
-	memset (newcl, 0, sizeof(client_t));
+	d_memset (newcl, 0, sizeof(client_t));
 
 	// if there is already a slot for this ip, reuse it
 	for (i=0,cl=svs.clients ; i<maxclients->value ; i++,cl++)

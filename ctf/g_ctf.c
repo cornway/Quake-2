@@ -301,7 +301,7 @@ void CTFSpawn(void)
 		flag1_item = FindItemByClassname("item_flag_team1");
 	if (!flag2_item)
 		flag2_item = FindItemByClassname("item_flag_team2");
-	memset(&ctfgame, 0, sizeof(ctfgame));
+	d_memset(&ctfgame, 0, sizeof(ctfgame));
 	CTFSetupTechSpawn();
 
 	if (competition->value > 1) {
@@ -2658,7 +2658,7 @@ void CTFStartMatch(void)
 
 	ctfgame.team1 = ctfgame.team2 = 0;
 
-	memset(ctfgame.ghosts, 0, sizeof(ctfgame.ghosts));
+	d_memset(ctfgame.ghosts, 0, sizeof(ctfgame.ghosts));
 
 	for (i = 1; i <= maxclients->value; i++) {
 		ent = g_edicts + i;

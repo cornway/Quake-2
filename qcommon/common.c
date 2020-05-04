@@ -837,7 +837,7 @@ void MSG_ReadDeltaUsercmd (sizebuf_t *msg_read, usercmd_t *from, usercmd_t *move
 {
 	int bits;
 
-	memcpy (move, from, sizeof(*move));
+	d_memcpy (move, from, sizeof(*move));
 
 	bits = MSG_ReadByte (msg_read);
 		
@@ -885,7 +885,7 @@ void MSG_ReadData (sizebuf_t *msg_read, void *data, int len)
 
 void SZ_Init (sizebuf_t *buf, byte *data, int length)
 {
-	memset (buf, 0, sizeof(*buf));
+	d_memset (buf, 0, sizeof(*buf));
 	buf->data = data;
 	buf->maxsize = length;
 }
@@ -933,12 +933,12 @@ void SZ_Print (sizebuf_t *buf, char *data)
 	if (buf->cursize)
 	{
 		if (buf->data[buf->cursize-1])
-			memcpy ((byte *)SZ_GetSpace(buf, len),data,len); // no trailing 0
+			d_memcpy ((byte *)SZ_GetSpace(buf, len),data,len); // no trailing 0
 		else
-			memcpy ((byte *)SZ_GetSpace(buf, len-1)-1,data,len); // write over trailing 0
+			d_memcpy ((byte *)SZ_GetSpace(buf, len-1)-1,data,len); // write over trailing 0
 	}
 	else
-		memcpy ((byte *)SZ_GetSpace(buf, len),data,len);
+		d_memcpy ((byte *)SZ_GetSpace(buf, len),data,len);
 }
 
 
@@ -1065,7 +1065,7 @@ void Info_Print (char *s)
 		l = o - key;
 		if (l < 20)
 		{
-			memset (o, ' ', 20-l);
+			d_memset (o, ' ', 20-l);
 			key[20] = 0;
 		}
 		else
@@ -1352,7 +1352,7 @@ byte	COM_BlockSequenceCRCByte (byte *base, int length, int sequence)
 
 	if (length > 60)
 		length = 60;
-	memcpy (chkb, base, length);
+	d_memcpy (chkb, base, length);
 
 	chkb[length] = p[0];
 	chkb[length+1] = p[1];

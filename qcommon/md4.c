@@ -125,7 +125,7 @@ void MD4Update (MD4_CTX *context, unsigned char *input, unsigned int inputLen)
 	/* Transform as many times as possible.*/
 	if (inputLen >= partLen)
 	{
- 		memcpy((POINTER)&context->buffer[index], (POINTER)input, partLen);
+ 		d_memcpy((POINTER)&context->buffer[index], (POINTER)input, partLen);
  		MD4Transform (context->state, context->buffer);
 
  		for (i = partLen; i + 63 < inputLen; i += 64)
@@ -137,7 +137,7 @@ void MD4Update (MD4_CTX *context, unsigned char *input, unsigned int inputLen)
  		i = 0;
 
 	/* Buffer remaining input */
-	memcpy ((POINTER)&context->buffer[index], (POINTER)&input[i], inputLen-i);
+	d_memcpy ((POINTER)&context->buffer[index], (POINTER)&input[i], inputLen-i);
 }
 
 
@@ -162,7 +162,7 @@ void MD4Final (unsigned char digest[16], MD4_CTX *context)
 	Encode (digest, context->state, 16);
 
 	/* Zeroize sensitive information.*/
-	memset ((POINTER)context, 0, sizeof (*context));
+	d_memset ((POINTER)context, 0, sizeof (*context));
 }
 
 
@@ -233,7 +233,7 @@ state[2] += c;
 state[3] += d;
 
 	/* Zeroize sensitive information.*/
-	memset ((POINTER)x, 0, sizeof (x));
+	d_memset ((POINTER)x, 0, sizeof (x));
 }
 
 

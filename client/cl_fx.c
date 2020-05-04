@@ -54,7 +54,7 @@ CL_ClearLightStyles
 */
 void CL_ClearLightStyles (void)
 {
-	memset (cl_lightstyle, 0, sizeof(cl_lightstyle));
+	d_memset (cl_lightstyle, 0, sizeof(cl_lightstyle));
 	lastofs = -1;
 }
 
@@ -137,7 +137,7 @@ CL_ClearDlights
 */
 void CL_ClearDlights (void)
 {
-	memset (cl_dlights, 0, sizeof(cl_dlights));
+	d_memset (cl_dlights, 0, sizeof(cl_dlights));
 }
 
 /*
@@ -159,7 +159,7 @@ cdlight_t *CL_AllocDlight (int key)
 		{
 			if (dl->key == key)
 			{
-				memset (dl, 0, sizeof(*dl));
+				d_memset (dl, 0, sizeof(*dl));
 				dl->key = key;
 				return dl;
 			}
@@ -172,14 +172,14 @@ cdlight_t *CL_AllocDlight (int key)
 	{
 		if (dl->die < cl.time)
 		{
-			memset (dl, 0, sizeof(*dl));
+			d_memset (dl, 0, sizeof(*dl));
 			dl->key = key;
 			return dl;
 		}
 	}
 
 	dl = &cl_dlights[0];
-	memset (dl, 0, sizeof(*dl));
+	d_memset (dl, 0, sizeof(*dl));
 	dl->key = key;
 	return dl;
 }

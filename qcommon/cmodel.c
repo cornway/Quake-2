@@ -511,7 +511,7 @@ void CMod_LoadVisibility (lump_t *l)
 	if (l->filelen > MAX_MAP_VISIBILITY)
 		Com_Error (ERR_DROP, "Map has too large visibility lump");
 
-	memcpy (map_visibility, cmod_base + l->fileofs, l->filelen);
+	d_memcpy (map_visibility, cmod_base + l->fileofs, l->filelen);
 
 	map_vis->numclusters = LittleLong (map_vis->numclusters);
 	for (i=0 ; i<map_vis->numclusters ; i++)
@@ -533,7 +533,7 @@ void CMod_LoadEntityString (lump_t *l)
 	if (l->filelen > MAX_MAP_ENTSTRING)
 		Com_Error (ERR_DROP, "Map has too large entity lump");
 
-	memcpy (map_entitystring, cmod_base + l->fileofs, l->filelen);
+	d_memcpy (map_entitystring, cmod_base + l->fileofs, l->filelen);
 }
 
 
@@ -560,7 +560,7 @@ cmodel_t *CM_LoadMap (char *name, qboolean clientload, unsigned *checksum)
 		*checksum = last_checksum;
 		if (!clientload)
 		{
-			memset (portalopen, 0, sizeof(portalopen));
+			d_memset (portalopen, 0, sizeof(portalopen));
 			FloodAreaConnections ();
 		}
 		return &map_cmodels[0];		// still have the right version
@@ -623,7 +623,7 @@ cmodel_t *CM_LoadMap (char *name, qboolean clientload, unsigned *checksum)
 
 	CM_InitBoxHull ();
 
-	memset (portalopen, 0, sizeof(portalopen));
+	d_memset (portalopen, 0, sizeof(portalopen));
 	FloodAreaConnections ();
 
 	strcpy (map_name, name);
@@ -1358,7 +1358,7 @@ trace_t		CM_BoxTrace (vec3_t start, vec3_t end,
 	c_traces++;			// for statistics, may be zeroed
 
 	// fill in a default trace
-	memset (&trace_trace, 0, sizeof(trace_trace));
+	d_memset (&trace_trace, 0, sizeof(trace_trace));
 	trace_trace.fraction = 1;
 	trace_trace.surface = &(nullsurface.c);
 
@@ -1575,7 +1575,7 @@ byte	phsrow[MAX_MAP_LEAFS/8];
 byte	*CM_ClusterPVS (int cluster)
 {
 	if (cluster == -1)
-		memset (pvsrow, 0, (numclusters+7)>>3);
+		d_memset (pvsrow, 0, (numclusters+7)>>3);
 	else
 		CM_DecompressVis (map_visibility + map_vis->bitofs[cluster][DVIS_PVS], pvsrow);
 	return pvsrow;
@@ -1584,7 +1584,7 @@ byte	*CM_ClusterPVS (int cluster)
 byte	*CM_ClusterPHS (int cluster)
 {
 	if (cluster == -1)
-		memset (phsrow, 0, (numclusters+7)>>3);
+		d_memset (phsrow, 0, (numclusters+7)>>3);
 	else
 		CM_DecompressVis (map_visibility + map_vis->bitofs[cluster][DVIS_PHS], phsrow);
 	return phsrow;
@@ -1693,11 +1693,11 @@ int CM_WriteAreaBits (byte *buffer, int area)
 
 	if (map_noareas->value)
 	{	// for debugging, send everything
-		memset (buffer, 255, bytes);
+		d_memset (buffer, 255, bytes);
 	}
 	else
 	{
-		memset (buffer, 0, bytes);
+		d_memset (buffer, 0, bytes);
 
 		floodnum = map_areas[area].floodnum;
 		for (i=0 ; i<numareas ; i++)

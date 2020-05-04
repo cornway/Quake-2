@@ -473,7 +473,7 @@ image_t *R_LoadWal (char *name)
 	image->pixels[3] = image->pixels[2] + image->width*image->height/16;
 
 	ofs = LittleLong (mt->offsets[0]);
-	memcpy ( image->pixels[0], (byte *)mt + ofs, size);
+	d_memcpy ( image->pixels[0], (byte *)mt + ofs, size);
 
 	ri.FS_FreeFile ((void *)mt);
 

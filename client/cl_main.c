@@ -598,8 +598,8 @@ void CL_ClearState (void)
 	CL_ClearTEnts ();
 
 // wipe the entire cl structure
-	memset (&cl, 0, sizeof(cl));
-	memset (&cl_entities, 0, sizeof(cl_entities));
+	d_memset (&cl, 0, sizeof(cl));
+	d_memset (&cl_entities, 0, sizeof(cl_entities));
 
 	SZ_Clear (&cls.netchan.message);
 

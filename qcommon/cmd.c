@@ -121,7 +121,7 @@ void Cbuf_InsertText (char *text)
 	if (templen)
 	{
 		temp = Z_Malloc (templen);
-		memcpy (temp, cmd_text.data, templen);
+		d_memcpy (temp, cmd_text.data, templen);
 		SZ_Clear (&cmd_text);
 	}
 	else
@@ -146,7 +146,7 @@ Cbuf_CopyToDefer
 */
 void Cbuf_CopyToDefer (void)
 {
-	memcpy(defer_text_buf, cmd_text_buf, cmd_text.cursize);
+	d_memcpy(defer_text_buf, cmd_text_buf, cmd_text.cursize);
 	defer_text_buf[cmd_text.cursize] = 0;
 	cmd_text.cursize = 0;
 }
@@ -217,7 +217,7 @@ void Cbuf_Execute (void)
 		}
 			
 				
-		memcpy (line, text, i);
+		d_memcpy (line, text, i);
 		line[i] = 0;
 		
 // delete the text from the command buffer and move remaining commands down

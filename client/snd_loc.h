@@ -135,7 +135,7 @@ extern	vec3_t	listener_up;
 extern	dma_t	dma;
 extern	playsound_t	s_pendingplays;
 
-#define	MAX_RAW_SAMPLES	8192
+#define	MAX_RAW_SAMPLES	2048
 extern	portable_samplepair_t	s_rawsamples[MAX_RAW_SAMPLES];
 
 extern cvar_t	*s_volume;

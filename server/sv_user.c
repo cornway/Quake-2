@@ -107,7 +107,7 @@ void SV_New_f (void)
 		ent = EDICT_NUM(playernum+1);
 		ent->s.number = playernum+1;
 		sv_client->edict = ent;
-		memset (&sv_client->lastcmd, 0, sizeof(sv_client->lastcmd));
+		d_memset (&sv_client->lastcmd, 0, sizeof(sv_client->lastcmd));
 
 		// begin fetching configstrings
 		MSG_WriteByte (&sv_client->netchan.message, svc_stufftext);
@@ -200,7 +200,7 @@ void SV_Baselines_f (void)
 	
 	start = atoi(Cmd_Argv(2));
 
-	memset (&nullstate, 0, sizeof(nullstate));
+	d_memset (&nullstate, 0, sizeof(nullstate));
 
 	// write a packet full of data
 

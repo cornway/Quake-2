@@ -105,7 +105,7 @@ void SCR_LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *h
 	if (palette)
 	{
 		*palette = Z_Malloc(768);
-		memcpy (*palette, (byte *)pcx + len - 768, 768);
+		d_memcpy (*palette, (byte *)pcx + len - 768, 768);
 	}
 
 	if (width)
@@ -263,12 +263,12 @@ void Huff1TableInit (void)
 	int		numhnodes;
 
 	cin.hnodes1 = Z_Malloc (256*256*2*4);
-	memset (cin.hnodes1, 0, 256*256*2*4);
+	d_memset (cin.hnodes1, 0, 256*256*2*4);
 
 	for (prev=0 ; prev<256 ; prev++)
 	{
-		memset (cin.h_count,0,sizeof(cin.h_count));
-		memset (cin.h_used,0,sizeof(cin.h_used));
+		d_memset (cin.h_count,0,sizeof(cin.h_count));
+		d_memset (cin.h_used,0,sizeof(cin.h_used));
 
 		// read a row of counts
 		FS_Read (counts, sizeof(counts), cl.cinematic_file);
@@ -610,7 +610,7 @@ void SCR_PlayCinematic (char *arg)
 		}
 		else
 		{
-			memcpy (cl.cinematicpalette, palette, sizeof(cl.cinematicpalette));
+			d_memcpy (cl.cinematicpalette, palette, sizeof(cl.cinematicpalette));
 			Z_Free (palette);
 		}
 		return;

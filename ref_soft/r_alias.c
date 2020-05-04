@@ -377,8 +377,8 @@ void R_AliasSetUpTransform (void)
 
 // TODO: can do this with simple matrix rearrangement
 
-	memset( aliasworldtransform, 0, sizeof( aliasworldtransform ) );
-	memset( aliasoldworldtransform, 0, sizeof( aliasworldtransform ) );
+	d_memset( aliasworldtransform, 0, sizeof( aliasworldtransform ) );
+	d_memset( aliasoldworldtransform, 0, sizeof( aliasworldtransform ) );
 
 	for (i=0 ; i<3 ; i++)
 	{

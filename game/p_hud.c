@@ -536,7 +536,7 @@ void G_CheckChaseStats (edict_t *ent)
 		cl = g_edicts[i].client;
 		if (!g_edicts[i].inuse || cl->chase_target != ent)
 			continue;
-		memcpy(cl->ps.stats, ent->client->ps.stats, sizeof(cl->ps.stats));
+		d_memcpy(cl->ps.stats, ent->client->ps.stats, sizeof(cl->ps.stats));
 		G_SetSpectatorStats(g_edicts + i);
 	}
 }

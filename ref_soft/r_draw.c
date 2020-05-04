@@ -285,7 +285,7 @@ void Draw_Pic (int x, int y, char *name)
 	{
 		for (v=0 ; v<height ; v++)
 		{
-			memcpy (dest, source, pic->width);
+			d_memcpy (dest, source, pic->width);
 			dest += vid.rowbytes;
 			source += pic->width;
 		}

@@ -461,7 +461,7 @@ void G_FreeEdict (edict_t *ed)
 		return;
 	}
 
-	memset (ed, 0, sizeof(*ed));
+	d_memset (ed, 0, sizeof(*ed));
 	ed->classname = "freed";
 	ed->freetime = level.time;
 	ed->inuse = false;

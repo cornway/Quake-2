@@ -1094,7 +1094,7 @@ void ClientEndServerFrame (edict_t *ent)
 		edict_t *e = g_edicts + i;
 		if (!e->inuse || e->client->chase_target != ent)
 			continue;
-		memcpy(e->client->ps.stats, 
+		d_memcpy(e->client->ps.stats, 
 			ent->client->ps.stats, 
 			sizeof(ent->client->ps.stats));
 		e->client->ps.stats[STAT_LAYOUTS] = 1;

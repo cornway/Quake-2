@@ -608,7 +608,7 @@ void InitClientPersistant (gclient_t *client)
 {
 	gitem_t		*item;
 
-	memset (&client->pers, 0, sizeof(client->pers));
+	d_memset (&client->pers, 0, sizeof(client->pers));
 
 	item = FindItem("Blaster");
 	client->pers.selected_item = ITEM_INDEX(item);
@@ -632,7 +632,7 @@ void InitClientPersistant (gclient_t *client)
 
 void InitClientResp (gclient_t *client)
 {
-	memset (&client->resp, 0, sizeof(client->resp));
+	d_memset (&client->resp, 0, sizeof(client->resp));
 	client->resp.enterframe = level.framenum;
 	client->resp.coop_respawn = client->pers;
 }
@@ -1119,7 +1119,7 @@ void PutClientInServer (edict_t *ent)
 		char		userinfo[MAX_INFO_STRING];
 
 		resp = client->resp;
-		memcpy (userinfo, client->pers.userinfo, sizeof(userinfo));
+		d_memcpy (userinfo, client->pers.userinfo, sizeof(userinfo));
 		InitClientPersistant (client);
 		ClientUserinfoChanged (ent, userinfo);
 	}
@@ -1129,7 +1129,7 @@ void PutClientInServer (edict_t *ent)
 		char		userinfo[MAX_INFO_STRING];
 
 		resp = client->resp;
-		memcpy (userinfo, client->pers.userinfo, sizeof(userinfo));
+		d_memcpy (userinfo, client->pers.userinfo, sizeof(userinfo));
 		// this is kind of ugly, but it's how we want to handle keys in coop
 //		for (n = 0; n < game.num_items; n++)
 //		{
@@ -1145,12 +1145,12 @@ void PutClientInServer (edict_t *ent)
 	}
 	else
 	{
-		memset (&resp, 0, sizeof(resp));
+		d_memset (&resp, 0, sizeof(resp));
 	}
 
 	// clear everything but the persistant data
 	saved = client->pers;
-	memset (client, 0, sizeof(*client));
+	d_memset (client, 0, sizeof(*client));
 	client->pers = saved;
 	if (client->pers.health <= 0)
 		InitClientPersistant(client);
@@ -1185,7 +1185,7 @@ void PutClientInServer (edict_t *ent)
 	VectorClear (ent->velocity);
 
 	// clear playerstate values
-	memset (&ent->client->ps, 0, sizeof(client->ps));
+	d_memset (&ent->client->ps, 0, sizeof(client->ps));
 
 	client->ps.pmove.origin[0] = spawn_origin[0]*8;
 	client->ps.pmove.origin[1] = spawn_origin[1]*8;
@@ -1598,7 +1598,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	} else {
 
 		// set up for pmove
-		memset (&pm, 0, sizeof(pm));
+		d_memset (&pm, 0, sizeof(pm));
 
 		if (ent->movetype == MOVETYPE_NOCLIP)
 			client->ps.pmove.pm_type = PM_SPECTATOR;

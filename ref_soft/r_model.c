@@ -77,7 +77,7 @@ Mod_Init
 */
 void Mod_Init (void)
 {
-	memset (mod_novis, 0xff, sizeof(mod_novis));
+	d_memset (mod_novis, 0xff, sizeof(mod_novis));
 }
 
 /*
@@ -138,7 +138,7 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	{
 		if (crash)
 			ri.Sys_Error (ERR_DROP,"Mod_NumForName: %s not found", mod->name);
-		memset (mod->name, 0, sizeof(mod->name));
+		d_memset (mod->name, 0, sizeof(mod->name));
 		return NULL;
 	}
 	
@@ -358,7 +358,7 @@ void Mod_LoadVisibility (lump_t *l)
 		return;
 	}
 	loadmodel->vis = Hunk_Alloc ( l->filelen);	
-	memcpy (loadmodel->vis, mod_base + l->fileofs, l->filelen);
+	d_memcpy (loadmodel->vis, mod_base + l->fileofs, l->filelen);
 
 	loadmodel->vis->numclusters = LittleLong (loadmodel->vis->numclusters);
 	for (i=0 ; i<loadmodel->vis->numclusters ; i++)
@@ -1030,14 +1030,14 @@ void Mod_LoadAliasModel (model_t *mod, void *buffer)
 		poutframe = (daliasframe_t *) ((byte *)pheader 
 			+ pheader->ofs_frames + i * pheader->framesize);
 
-		memcpy (poutframe->name, pinframe->name, sizeof(poutframe->name));
+		d_memcpy (poutframe->name, pinframe->name, sizeof(poutframe->name));
 		for (j=0 ; j<3 ; j++)
 		{
 			poutframe->scale[j] = LittleFloat (pinframe->scale[j]);
 			poutframe->translate[j] = LittleFloat (pinframe->translate[j]);
 		}
 		// verts are all 8 bit, so no swapping needed
-		memcpy (poutframe->verts, pinframe->verts, 
+		d_memcpy (poutframe->verts, pinframe->verts, 
 			pheader->num_xyz*sizeof(dtrivertx_t));
 
 	}
@@ -1054,7 +1054,7 @@ void Mod_LoadAliasModel (model_t *mod, void *buffer)
 
 
 	// register all skins
-	memcpy ((char *)pheader + pheader->ofs_skins, (char *)pinmodel + pheader->ofs_skins,
+	d_memcpy ((char *)pheader + pheader->ofs_skins, (char *)pinmodel + pheader->ofs_skins,
 		pheader->num_skins*MAX_SKINNAME);
 	for (i=0 ; i<pheader->num_skins ; i++)
 	{
@@ -1102,7 +1102,7 @@ void Mod_LoadSpriteModel (model_t *mod, void *buffer)
 		sprout->frames[i].height = LittleLong (sprin->frames[i].height);
 		sprout->frames[i].origin_x = LittleLong (sprin->frames[i].origin_x);
 		sprout->frames[i].origin_y = LittleLong (sprin->frames[i].origin_y);
-		memcpy (sprout->frames[i].name, sprin->frames[i].name, MAX_SKINNAME);
+		d_memcpy (sprout->frames[i].name, sprin->frames[i].name, MAX_SKINNAME);
 		mod->skins[i] = R_FindImage (sprout->frames[i].name, it_sprite);
 	}
 
@@ -1199,7 +1199,7 @@ void R_EndRegistration (void)
 		if (mod->registration_sequence != registration_sequence)
 		{	// don't need this model
 			Hunk_Free (mod->extradata);
-			memset (mod, 0, sizeof(*mod));
+			d_memset (mod, 0, sizeof(*mod));
 		}
 		else
 		{	// make sure it is paged in
@@ -1221,7 +1221,7 @@ Mod_Free
 void Mod_Free (model_t *mod)
 {
 	Hunk_Free (mod->extradata);
-	memset (mod, 0, sizeof(*mod));
+	d_memset (mod, 0, sizeof(*mod));
 }
 
 /*

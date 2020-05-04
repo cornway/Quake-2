@@ -151,7 +151,7 @@ called to open a channel to a remote system
 */
 void Netchan_Setup (netsrc_t sock, netchan_t *chan, netadr_t adr, int qport)
 {
-	memset (chan, 0, sizeof(*chan));
+	d_memset (chan, 0, sizeof(*chan));
 	
 	chan->sock = sock;
 	chan->remote_address = adr;
@@ -230,7 +230,7 @@ void Netchan_Transmit (netchan_t *chan, int length, byte *data)
 
 	if (!chan->reliable_length && chan->message.cursize)
 	{
-		memcpy (chan->reliable_buf, chan->message_buf, chan->message.cursize);
+		d_memcpy (chan->reliable_buf, chan->message_buf, chan->message.cursize);
 		chan->reliable_length = chan->message.cursize;
 		chan->message.cursize = 0;
 		chan->reliable_sequence ^= 1;

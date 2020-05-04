@@ -51,7 +51,7 @@ void SV_SetMaster_f (void)
 	Cvar_Set ("public", "1");
 
 	for (i=1 ; i<MAX_MASTERS ; i++)
-		memset (&master_adr[i], 0, sizeof(master_adr[i]));
+		d_memset (&master_adr[i], 0, sizeof(master_adr[i]));
 
 	slot = 1;		// slot 0 will always contain the id master
 	for (i=1 ; i<Cmd_Argc() ; i++)
