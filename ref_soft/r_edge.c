@@ -463,10 +463,10 @@ void R_LeadingEdge (edge_t *edge)
 			if (surf->insubmodel && (surf->key == surf2->key))
 			{
 			// must be two bmodels in the same leaf; sort on 1/z
-				fu = (float)(edge->u - 0xFFFFF) * (1.0 / 0x100000);
+				fu = (float)(edge->u - 0xFFFFF) * (1.0f / 0x100000);
 				newzi = surf->d_ziorigin + fv*surf->d_zistepv +
 						fu*surf->d_zistepu;
-				newzibottom = newzi * 0.99;
+				newzibottom = newzi * 0.99f;
 
 				testzi = surf2->d_ziorigin + fv*surf2->d_zistepv +
 						fu*surf2->d_zistepu;
@@ -476,7 +476,7 @@ void R_LeadingEdge (edge_t *edge)
 					goto newtop;
 				}
 
-				newzitop = newzi * 1.01;
+				newzitop = newzi * 1.01f;
 				if (newzitop >= testzi)
 				{
 					if (surf->d_zistepu >= surf2->d_zistepu)
@@ -504,7 +504,7 @@ continue_search:
 				fu = (float)(edge->u - 0xFFFFF) * (1.0 / 0x100000);
 				newzi = surf->d_ziorigin + fv*surf->d_zistepv +
 						fu*surf->d_zistepu;
-				newzibottom = newzi * 0.99;
+				newzibottom = newzi * 0.99f;
 
 				testzi = surf2->d_ziorigin + fv*surf2->d_zistepv +
 						fu*surf2->d_zistepu;
@@ -514,7 +514,7 @@ continue_search:
 					goto gotposition;
 				}
 
-				newzitop = newzi * 1.01;
+				newzitop = newzi * 1.01f;
 				if (newzitop >= testzi)
 				{
 					if (surf->d_zistepu >= surf2->d_zistepu)
@@ -808,7 +808,7 @@ void D_CalcGradients (msurface_t *pface)
 
 	pplane = pface->plane;
 
-	mipscale = 1.0 / (float)(1 << miplevel);
+	mipscale = 1.0f / (float)(1 << miplevel);
 
 	TransformVector (pface->texinfo->vecs[0], p_saxis);
 	TransformVector (pface->texinfo->vecs[1], p_taxis);
@@ -829,10 +829,10 @@ void D_CalcGradients (msurface_t *pface)
 	VectorScale (transformed_modelorg, mipscale, p_temp1);
 
 	t = 0x10000*mipscale;
-	sadjust = ((fixed16_t)(DotProduct (p_temp1, p_saxis) * 0x10000 + 0.5)) -
+	sadjust = ((fixed16_t)(DotProduct (p_temp1, p_saxis) * 0x10000 + 0.5f)) -
 			((pface->texturemins[0] << 16) >> miplevel)
 			+ pface->texinfo->vecs[0][3]*t;
-	tadjust = ((fixed16_t)(DotProduct (p_temp1, p_taxis) * 0x10000 + 0.5)) -
+	tadjust = ((fixed16_t)(DotProduct (p_temp1, p_taxis) * 0x10000 + 0.5f)) -
 			((pface->texturemins[1] << 16) >> miplevel)
 			+ pface->texinfo->vecs[1][3]*t;
 
@@ -840,9 +840,9 @@ void D_CalcGradients (msurface_t *pface)
 	if (pface->texinfo->flags & SURF_FLOWING)
 	{
 		if(pface->texinfo->flags & SURF_WARP)
-			sadjust += 0x10000 * (-128 * ( (r_newrefdef.time * 0.25) - (int)(r_newrefdef.time * 0.25) ));
+			sadjust += 0x10000 * (-128 * ( (r_newrefdef.time * 0.25f) - (int)(r_newrefdef.time * 0.25f) ));
 		else
-			sadjust += 0x10000 * (-128 * ( (r_newrefdef.time * 0.77) - (int)(r_newrefdef.time * 0.77) ));
+			sadjust += 0x10000 * (-128 * ( (r_newrefdef.time * 0.77f) - (int)(r_newrefdef.time * 0.77f) ));
 	}
 	// PGM
 

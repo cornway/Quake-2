@@ -90,8 +90,8 @@ void D_ViewChanged (void)
 	if (d_pix_min < 1)
 		d_pix_min = 1;
 
-	d_pix_max = (int)((float)r_refdef.vrect.width / (320.0 / 4.0) + 0.5);
-	d_pix_shift = 8 - (int)((float)r_refdef.vrect.width / 320.0 + 0.5);
+	d_pix_max = (int)((float)r_refdef.vrect.width / (320.0f / 4.0f) + 0.5f);
+	d_pix_shift = 8 - (int)((float)r_refdef.vrect.width / 320.0f + 0.5f);
 	if (d_pix_max < 1)
 		d_pix_max = 1;
 
@@ -339,18 +339,18 @@ void R_ViewChanged (vrect_t *vr)
 	verticalFieldOfView = 2*tan((float)r_newrefdef.fov_y/360*M_PI);
 
 	r_refdef.fvrectx = (float)r_refdef.vrect.x;
-	r_refdef.fvrectx_adj = (float)r_refdef.vrect.x - 0.5;
+	r_refdef.fvrectx_adj = (float)r_refdef.vrect.x - 0.5f;
 	r_refdef.vrect_x_adj_shift20 = (r_refdef.vrect.x<<20) + (1<<19) - 1;
 	r_refdef.fvrecty = (float)r_refdef.vrect.y;
-	r_refdef.fvrecty_adj = (float)r_refdef.vrect.y - 0.5;
+	r_refdef.fvrecty_adj = (float)r_refdef.vrect.y - 0.5f;
 	r_refdef.vrectright = r_refdef.vrect.x + r_refdef.vrect.width;
 	r_refdef.vrectright_adj_shift20 = (r_refdef.vrectright<<20) + (1<<19) - 1;
 	r_refdef.fvrectright = (float)r_refdef.vrectright;
-	r_refdef.fvrectright_adj = (float)r_refdef.vrectright - 0.5;
-	r_refdef.vrectrightedge = (float)r_refdef.vrectright - 0.99;
+	r_refdef.fvrectright_adj = (float)r_refdef.vrectright - 0.5f;
+	r_refdef.vrectrightedge = (float)r_refdef.vrectright - 0.99f;
 	r_refdef.vrectbottom = r_refdef.vrect.y + r_refdef.vrect.height;
 	r_refdef.fvrectbottom = (float)r_refdef.vrectbottom;
-	r_refdef.fvrectbottom_adj = (float)r_refdef.vrectbottom - 0.5;
+	r_refdef.fvrectbottom_adj = (float)r_refdef.vrectbottom - 0.5f;
 
 	r_refdef.aliasvrect.x = (int)(r_refdef.vrect.x * r_aliasuvscale);
 	r_refdef.aliasvrect.y = (int)(r_refdef.vrect.y * r_aliasuvscale);
@@ -379,11 +379,11 @@ void R_ViewChanged (vrect_t *vr)
 
 	xscale = r_refdef.vrect.width / r_refdef.horizontalFieldOfView;
 	aliasxscale = xscale * r_aliasuvscale;
-	xscaleinv = 1.0 / xscale;
+	xscaleinv = 1.0f / xscale;
 
 	yscale = xscale;
 	aliasyscale = yscale * r_aliasuvscale;
-	yscaleinv = 1.0 / yscale;
+	yscaleinv = 1.0f / yscale;
 	xscaleshrink = (r_refdef.vrect.width-6)/r_refdef.horizontalFieldOfView;
 	yscaleshrink = xscaleshrink;
 
@@ -395,7 +395,7 @@ void R_ViewChanged (vrect_t *vr)
 	
 // right side clip
 	screenedge[1].normal[0] =
-			1.0 / ((1.0-xOrigin)*r_refdef.horizontalFieldOfView);
+			1.0f / ((1.0f-xOrigin)*r_refdef.horizontalFieldOfView);
 	screenedge[1].normal[1] = 0;
 	screenedge[1].normal[2] = 1;
 	screenedge[1].type = PLANE_ANYZ;
