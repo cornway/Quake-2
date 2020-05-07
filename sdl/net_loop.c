@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "net_loop.h"
 #include <debug.h>
 #include <misc_utils.h>
+#include <bsp_sys.h>
 
 #define	LOOPBACK	0x7f000001
 
@@ -126,6 +127,35 @@ void NET_SendPacket (netsrc_t sock, int length, void *data, netadr_t to)
     loop->msgs[i].datalen = length;
 }
 
+static qboolean NET_ParseIP (char *str, unsigned char ipv4[4], unsigned short *port)
+{
+    int i = 0;
+    char buf[32] = {0}, *bufp, *pbufp;
+    if (!isdigit((int)str[0])) {
+        return false;
+    }
+    d_memcpy(buf, str, sizeof(buf));
+
+    bufp = buf;
+    pbufp = buf;
+    while (bufp != bufp + sizeof(buf) && *bufp && i < 4) {
+      if (*bufp == '.' || *bufp == ':') {
+            if (bufp == pbufp) {
+                dprintf("%s() : Garbage\n", __func__);
+                return false;
+            }
+            *bufp = 0;
+            ipv4[i++] = atoi(pbufp);
+            pbufp = bufp + 1;
+        }
+        bufp++;
+    }
+    if (i != 4) {
+        return false;
+    }
+    *port = atoi(pbufp);
+}
+
 /*
 =============
 NET_StringToAdr
@@ -139,14 +169,19 @@ idnewt:28000
 */
 qboolean	NET_StringToAdr (char *s, netadr_t *a)
 {
-	if (!strcmp (s, "localhost"))
-	{
-		d_memset (a, 0, sizeof(*a));
-		a->type = NA_LOOPBACK;
-		return true;
-	}
-    assert(0);
+    if (!strcmp (s, "localhost")) {
+        memset (a, 0, sizeof(*a));
+        a->type = NA_LOOPBACK;
+    } else if (NET_ParseIP(s, a->ip, &a->port)) {
+        a->type = NA_IP;
+    } else {
+        d_assert(0);
+    }
+    dprintf("%d() : %s\n", __func__, s);
+
+    return true;
 }
+
 
 /*
 ====================
@@ -172,19 +207,7 @@ qboolean	NET_CompareBaseAdr (netadr_t a, netadr_t b)
 	if (a.type == NA_LOOPBACK)
 		return true;
 
-	if (a.type == NA_IP)
-	{
-		if (a.ip[0] == b.ip[0] && a.ip[1] == b.ip[1] && a.ip[2] == b.ip[2] && a.ip[3] == b.ip[3])
-			return true;
-		return false;
-	}
-
-	if (a.type == NA_IPX)
-	{
-		if ((memcmp(a.ipx, b.ipx, 10) == 0))
-			return true;
-		return false;
-	}
+    d_assert(0);
 }
 
 void NET_Sleep(int msec)
