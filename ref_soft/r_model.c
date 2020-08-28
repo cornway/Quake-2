@@ -153,17 +153,17 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	switch (LittleLong(*(unsigned *)buf))
 	{
 	case IDALIASHEADER:
-		loadmodel->extradata = Hunk_Begin (0x200000);
+		Hunk_Begin (0x200000, &loadmodel->extradata);
 		Mod_LoadAliasModel (mod, buf);
 		break;
 		
 	case IDSPRITEHEADER:
-		loadmodel->extradata = Hunk_Begin (0x10000);
+		Hunk_Begin (0x10000, &loadmodel->extradata);
 		Mod_LoadSpriteModel (mod, buf);
 		break;
 	
 	case IDBSPHEADER:
-		loadmodel->extradata = Hunk_Begin (0x1000000);
+		Hunk_Begin (0x1000000, &loadmodel->extradata);
 		Mod_LoadBrushModel (mod, buf);
 		break;
 
@@ -508,6 +508,8 @@ void Mod_LoadTexinfo (lump_t *l)
 		next = LittleLong (in->nexttexinfo);
 		if (next > 0)
 			out->next = loadmodel->texinfo + next;
+        else
+            out->next = NULL;
 
 		Com_sprintf (name, sizeof(name), "textures/%s.wal", in->texture);
 		out->image = R_FindImage (name, it_wall);
@@ -1198,8 +1200,8 @@ void R_EndRegistration (void)
 			continue;
 		if (mod->registration_sequence != registration_sequence)
 		{	// don't need this model
-			Hunk_Free (mod->extradata);
 			d_memset (mod, 0, sizeof(*mod));
+			Hunk_Free (mod->extradata);
 		}
 		else
 		{	// make sure it is paged in
@@ -1220,8 +1222,8 @@ Mod_Free
 */
 void Mod_Free (model_t *mod)
 {
-	Hunk_Free (mod->extradata);
 	d_memset (mod, 0, sizeof(*mod));
+	Hunk_Free (mod->extradata);
 }
 
 /*

@@ -209,7 +209,7 @@ void CL_ParseDownload (void)
 	if (size == -1)
 	{
 		Com_Printf ("Server does not have this file.\n");
-		if (cls.download)
+		if (cls.download >= 0)
 		{
 			// if here, we tried to resume a file but the server said no
 			d_close (cls.download);

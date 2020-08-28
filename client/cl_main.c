@@ -303,7 +303,7 @@ void Cmd_ForwardToServer (void)
 
 void CL_Setenv_f( void )
 {
-#ifndef STM32
+#ifndef STM32//Fix this
 	int argc = Cmd_Argc();
 
 	if ( argc > 2 )
@@ -335,6 +335,8 @@ void CL_Setenv_f( void )
 			Com_Printf( "%s undefined\n", Cmd_Argv(1), env );
 		}
 	}
+#else
+    d_assert(0);
 #endif //STM32
 }
 
@@ -603,6 +605,7 @@ void CL_ClearState (void)
 
 	SZ_Clear (&cls.netchan.message);
 
+	SCR_InitCinematic();
 }
 
 /*
@@ -1842,7 +1845,7 @@ void CL_Shutdown(void)
 	S_Shutdown();
 	IN_Shutdown ();
 	VID_Shutdown();
-    assert(0);
+    d_assert(0);
 }
 
 

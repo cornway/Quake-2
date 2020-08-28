@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 #include "q_shared.h"
 #include <debug.h>
+#include <misc_utils.h>
+#include <bsp_sys.h>
 
 #define DEG2RAD( a ) ( a * M_PI ) / 180.0F
 
@@ -399,7 +401,7 @@ dist2 = p->normal[0]*emaxs[0] + p->normal[1]*emaxs[1] + p->normal[2]*emaxs[2];
 		break;
 	default:
 		dist1 = dist2 = 0;		// shut up compiler
-		assert( 0 );
+		d_assert( 0 );
 		break;
 	}
 
@@ -409,7 +411,7 @@ dist2 = p->normal[0]*emaxs[0] + p->normal[1]*emaxs[1] + p->normal[2]*emaxs[2];
 	if (dist2 < p->dist)
 		sides |= 2;
 
-	assert( sides != 0 );
+	d_assert( sides != 0 );
 
 	return sides;
 }

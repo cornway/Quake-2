@@ -554,30 +554,32 @@ void Sys_Mkdir (char *path)
 // Memory
 //
 
-byte *membase;
-int maxhunksize;
-int curhunksize;
+static byte **memptr;
+static byte *membase;
+static int maxhunksize;
+static int curhunksize;
 
-void *Hunk_Begin (int maxsize)
+void Hunk_Begin (int maxsize, void **ptr)
 {
 	maxhunksize = maxsize + sizeof(int);
 	curhunksize = 0;
-/* 	membase = mmap(0, maxhunksize, PROT_READ|PROT_WRITE,  */
-/* 		MAP_PRIVATE, -1, 0); */
-/* 	if ((membase == NULL) || (membase == MAP_FAILED)) */
+
 	membase = heap_malloc(maxhunksize);
 	if (membase == NULL)
 		Com_Error(ERR_FATAL, "unable to virtual allocate %d bytes", maxsize);
 
+    d_memzero(membase, maxhunksize);
 	*((int *)membase) = curhunksize;
 
-	return membase + sizeof(int);
+	memptr = ptr;
+    *memptr = membase + sizeof(int);
 }
 
 void *Hunk_Alloc (int size)
 {
 	byte *buf;
 
+    d_assert(membase);
 	// round to cacheline
 	size = (size+31)&~31;
 	if (curhunksize + size > maxhunksize)
@@ -589,6 +591,16 @@ void *Hunk_Alloc (int size)
 
 int Hunk_End (void)
 {
+    byte *newptr = heap_malloc(curhunksize);
+
+    if (!newptr) {
+        Com_Error(ERR_FATAL, "unable to virtual allocate %d bytes", curhunksize);
+    }
+    d_memcpy(newptr, *memptr, curhunksize);
+    *memptr = newptr;
+    heap_free(membase);
+    membase = NULL;
+    maxhunksize = 0;
 	return curhunksize;
 }
 

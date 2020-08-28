@@ -19,8 +19,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // common.c -- misc functions used in client and server
 #include "qcommon.h"
+#ifndef STM32
 #include <setjmp.h>
+#endif
 #include <debug.h>
+#include <bsp_sys.h>
+
 
 #define	MAXPRINTMSG	4096
 
@@ -36,7 +40,7 @@ int		realtime;
 jmp_buf abortframe;		// an ERR_DROP occured, exit the entire frame
 #else
 int abortframe = -1;
-#define longjmp(a, b) assert(0)
+#define longjmp(a, b) d_assert(0)
 #define setjmp(a) 0
 #endif
 

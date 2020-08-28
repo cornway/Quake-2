@@ -504,9 +504,9 @@ image_t	*R_FindImage (char *name, imagetype_t type)
 	// look for it
 	for (i=0, image=r_images ; i<numr_images ; i++,image++)
 	{
-		if (!strcmp(name, image->name))
+		if (!d_strcmp(name, image->name))
 		{
-			image->registration_sequence = registration_sequence;
+		    writeLong(&image->registration_sequence, registration_sequence);
 			return image;
 		}
 	}
@@ -516,18 +516,18 @@ image_t	*R_FindImage (char *name, imagetype_t type)
 	//
 	pic = NULL;
 	palette = NULL;
-	if (!strcmp(name+len-4, ".pcx"))
+	if (!d_strcmp(name+len-4, ".pcx"))
 	{
 		LoadPCX (name, &pic, &palette, &width, &height);
 		if (!pic)
 			return NULL;	// ri.Sys_Error (ERR_DROP, "R_FindImage: can't load %s", name);
 		image = GL_LoadPic (name, pic, width, height, type);
 	}
-	else if (!strcmp(name+len-4, ".wal"))
+	else if (!d_strcmp(name+len-4, ".wal"))
 	{
 		image = R_LoadWal (name);
 	}
-	else if (!strcmp(name+len-4, ".tga"))
+	else if (!d_strcmp(name+len-4, ".tga"))
 		return NULL;	// ri.Sys_Error (ERR_DROP, "R_FindImage: can't load %s in software renderer", name);
 	else
 		return NULL;	// ri.Sys_Error (ERR_DROP, "R_FindImage: bad extension on: %s", name);
@@ -578,8 +578,8 @@ void R_FreeUnusedImages (void)
 		if (image->type == it_pic)
 			continue;		// don't free pics
 		// free it
-		heap_free (image->pixels[0]);	// the other mip levels just follow
 		d_memset (image, 0, sizeof(*image));
+		heap_free (image->pixels[0]);	// the other mip levels just follow
 	}
 }
 

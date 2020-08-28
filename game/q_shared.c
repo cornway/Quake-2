@@ -398,7 +398,7 @@ dist2 = p->normal[0]*emaxs[0] + p->normal[1]*emaxs[1] + p->normal[2]*emaxs[2];
 		break;
 	default:
 		dist1 = dist2 = 0;		// shut up compiler
-		assert( 0 );
+		d_assert( 0 );
 		break;
 	}
 
@@ -408,7 +408,7 @@ dist2 = p->normal[0]*emaxs[0] + p->normal[1]*emaxs[1] + p->normal[2]*emaxs[2];
 	if (dist2 < p->dist)
 		sides |= 2;
 
-	assert( sides != 0 );
+	d_assert( sides != 0 );
 
 	return sides;
 }

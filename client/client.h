@@ -43,6 +43,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <input_main.h>
 #include <heap.h>
 #include <debug.h>
+#include <bsp_sys.h>
 
 //=============================================================================
 

@@ -280,7 +280,7 @@ void SV_StartSound (vec3_t origin, edict_t *entity, int channel,
 	vec3_t		origin_v;
 	qboolean	use_phs;
 
-	if (volume < 0 || volume > 1.0)
+	if (volume < 0 || volume > 1.0f)
 		Com_Error (ERR_FATAL, "SV_StartSound: volume = %f", volume);
 
 	if (attenuation < 0 || attenuation > 4)
@@ -289,7 +289,7 @@ void SV_StartSound (vec3_t origin, edict_t *entity, int channel,
 //	if (channel < 0 || channel > 15)
 //		Com_Error (ERR_FATAL, "SV_StartSound: channel = %i", channel);
 
-	if (timeofs < 0 || timeofs > 0.255)
+	if (timeofs < 0 || timeofs > 0.255f)
 		Com_Error (ERR_FATAL, "SV_StartSound: timeofs = %f", timeofs);
 
 	ent = NUM_FOR_EDICT(entity);
@@ -506,7 +506,7 @@ void SV_SendClientMessages (void)
 		{
 			// get the next message
 			r = d_read (sv.demofile, &msglen, 4);
-			if (r <= 0)
+			if (r == 0)
 			{
 				SV_DemoCompleted ();
 				return;
@@ -520,7 +520,7 @@ void SV_SendClientMessages (void)
 			if (msglen > MAX_MSGLEN)
 				Com_Error (ERR_DROP, "SV_SendClientMessages: msglen > MAX_MSGLEN");
 			r = d_read (sv.demofile, msgbuf, msglen);
-			if (r <= 0)
+			if (r == 0)
 			{
 				SV_DemoCompleted ();
 				return;

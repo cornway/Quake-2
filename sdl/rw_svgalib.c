@@ -23,6 +23,7 @@
 #include <lcd_main.h>
 #include <bsp_sys.h>
 #include <heap.h>
+#include <gfx.h>
 
 /*****************************************************************************/
 
@@ -58,7 +59,7 @@ int current_mode;
 
 void VID_PreConfig (void)
 {
-    screen_conf_t conf;
+    screen_conf_t conf = {0};
     int hwaccel = 0, p;
 
     p = bsp_argv_check("-gfxmod");
@@ -104,7 +105,7 @@ void VID_SetPalette (byte* palette)
         r = *palette++;
         g = *palette++;
         b = *palette++;
-        pal[i] = GFX_RGBA8888(r, g, b, 0xff);
+        pal[i] = GFX_ARGB8888(0xff, r, g, b);
     }
     vid_set_clut(pal, 256);
     return;
