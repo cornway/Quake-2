@@ -554,12 +554,17 @@ void Sys_Mkdir (char *path)
 // Memory
 //
 
-static byte **memptr;
+typedef struct hunk_frag_s {
+    struct hunk_frag_s *next;
+    void **ptr;
+} hunk_frag_t;
+
 static byte *membase;
 static int maxhunksize;
 static int curhunksize;
+static hunk_frag_t hunk_frag_head = {NULL};
 
-void Hunk_Begin (int maxsize, void **ptr)
+void *Hunk_Begin (void **ptr, int maxsize)
 {
 	maxhunksize = maxsize + sizeof(int);
 	curhunksize = 0;
@@ -571,15 +576,15 @@ void Hunk_Begin (int maxsize, void **ptr)
     d_memzero(membase, maxhunksize);
 	*((int *)membase) = curhunksize;
 
-	memptr = ptr;
-    *memptr = membase + sizeof(int);
+    hunk_frag_head.ptr = ptr;
+    hunk_frag_head.next = NULL;
+    *ptr = membase + sizeof(int);
 }
 
-void *Hunk_Alloc (int size)
+static void *_Hunk_Alloc (int size)
 {
 	byte *buf;
 
-    d_assert(membase);
 	// round to cacheline
 	size = (size+31)&~31;
 	if (curhunksize + size > maxhunksize)
@@ -589,16 +594,52 @@ void *Hunk_Alloc (int size)
 	return buf;
 }
 
+void *Hunk_Alloc (int size)
+{
+    d_assert(membase);
+    d_assert(NULL == hunk_frag_head.next);
+    hunk_frag_head.ptr = NULL;
+
+    return _Hunk_Alloc(size);
+}
+
+void *Hunk_Alloc_Frag (void **ptr, int size)
+{
+    d_assert(hunk_frag_head.ptr);
+
+    size = size + sizeof(hunk_frag_t);
+    hunk_frag_t *frag = (hunk_frag_t *)_Hunk_Alloc(size);
+
+    frag->ptr = ptr;
+
+    frag->next = hunk_frag_head.next;
+    hunk_frag_head.next = frag;
+    *ptr = frag + 1;
+    return *ptr;
+}
+
 int Hunk_End (void)
 {
-    byte *newptr = heap_malloc(curhunksize);
+    void *newptr = NULL;
 
-    if (!newptr) {
-        Com_Error(ERR_FATAL, "unable to virtual allocate %d bytes", curhunksize);
+    if (hunk_frag_head.next) {
+        newptr = heap_malloc(curhunksize);
     }
-    d_memcpy(newptr, *memptr, curhunksize);
-    *memptr = newptr;
-    heap_free(membase);
+
+    if (newptr) {
+        uint32_t offset;
+        hunk_frag_t *frag = &hunk_frag_head;
+
+        while (frag) {
+            offset = (uint8_t *)*frag->ptr - (uint8_t *)membase;
+            *frag->ptr = (void *)((uint8_t *)newptr + offset);
+            frag = frag->next;
+        }
+        d_memcpy(newptr, membase, curhunksize);
+        heap_free(membase);
+    } else {
+        heap_realloc(membase, curhunksize);
+    }
     membase = NULL;
     maxhunksize = 0;
 	return curhunksize;

@@ -153,17 +153,17 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	switch (LittleLong(*(unsigned *)buf))
 	{
 	case IDALIASHEADER:
-		Hunk_Begin (0x200000, &loadmodel->extradata);
+		Hunk_Begin (&loadmodel->extradata, 0x200000);
 		Mod_LoadAliasModel (mod, buf);
 		break;
 		
 	case IDSPRITEHEADER:
-		Hunk_Begin (0x10000, &loadmodel->extradata);
+		Hunk_Begin (&loadmodel->extradata, 0x10000);
 		Mod_LoadSpriteModel (mod, buf);
 		break;
 	
 	case IDBSPHEADER:
-		Hunk_Begin (0x1000000, &loadmodel->extradata);
+		Hunk_Begin (&loadmodel->extradata, 0x800000);
 		Mod_LoadBrushModel (mod, buf);
 		break;
 
@@ -303,7 +303,7 @@ void Mod_LoadLighting (lump_t *l)
 		return;
 	}
 	size = l->filelen/3;
-	loadmodel->lightdata = Hunk_Alloc (size);
+	loadmodel->lightdata = Hunk_Alloc_Frag (&loadmodel->lightdata, size);
 	in = (void *)(mod_base + l->fileofs);
 	for (i=0 ; i<size ; i++, in+=3)
 	{
@@ -357,7 +357,7 @@ void Mod_LoadVisibility (lump_t *l)
 		loadmodel->vis = NULL;
 		return;
 	}
-	loadmodel->vis = Hunk_Alloc ( l->filelen);	
+	loadmodel->vis = Hunk_Alloc_Frag ( &Hunk_Alloc_Frag, l->filelen);	
 	d_memcpy (loadmodel->vis, mod_base + l->fileofs, l->filelen);
 
 	loadmodel->vis->numclusters = LittleLong (loadmodel->vis->numclusters);
@@ -384,7 +384,7 @@ void Mod_LoadVertexes (lump_t *l)
 	if (l->filelen % sizeof(*in))
 		ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( (count+8)*sizeof(*out));		// extra for skybox
+	out = Hunk_Alloc_Frag ( &loadmodel->vertexes, (count+8)*sizeof(*out));		// extra for skybox
 
 	loadmodel->vertexes = out;
 	loadmodel->numvertexes = count;
@@ -412,7 +412,7 @@ void Mod_LoadSubmodels (lump_t *l)
 	if (l->filelen % sizeof(*in))
 		ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( count*sizeof(*out));	
+	out = Hunk_Alloc_Frag ( &loadmodel->submodels, count*sizeof(*out));	
 
 	loadmodel->submodels = out;
 	loadmodel->numsubmodels = count;
@@ -446,7 +446,7 @@ void Mod_LoadEdges (lump_t *l)
 	if (l->filelen % sizeof(*in))
 		ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( (count + 13) * sizeof(*out));	// extra for skybox
+	out = Hunk_Alloc_Frag ( &loadmodel->edges, (count + 13) * sizeof(*out));	// extra for skybox
 
 	loadmodel->edges = out;
 	loadmodel->numedges = count;
@@ -476,7 +476,8 @@ void Mod_LoadTexinfo (lump_t *l)
 	if (l->filelen % sizeof(*in))
 		ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( (count+6)*sizeof(*out));	// extra for skybox
+
+	out = Hunk_Alloc_Frag(&loadmodel->texinfo,  (count+6)*sizeof(*out));	// extra for skybox
 
 	loadmodel->texinfo = out;
 	loadmodel->numtexinfo = count;
@@ -602,7 +603,7 @@ void Mod_LoadFaces (lump_t *l)
 	if (l->filelen % sizeof(*in))
 		ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( (count+6)*sizeof(*out));	// extra for skybox
+	out = Hunk_Alloc_Frag ( &loadmodel->surfaces, (count+6)*sizeof(*out));	// extra for skybox
 
 	loadmodel->surfaces = out;
 	loadmodel->numsurfaces = count;
@@ -705,7 +706,7 @@ void Mod_LoadNodes (lump_t *l)
 	if (l->filelen % sizeof(*in))
 		ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( count*sizeof(*out));	
+	out = Hunk_Alloc_Frag ( &loadmodel->nodes, count*sizeof(*out));	
 
 	loadmodel->nodes = out;
 	loadmodel->numnodes = count;
@@ -753,7 +754,7 @@ void Mod_LoadLeafs (lump_t *l)
 	if (l->filelen % sizeof(*in))
 		ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( count*sizeof(*out));
+	out = Hunk_Alloc_Frag ( &loadmodel->leafs, count*sizeof(*out));
 
 	loadmodel->leafs = out;
 	loadmodel->numleafs = count;
@@ -792,7 +793,7 @@ void Mod_LoadMarksurfaces (lump_t *l)
 	if (l->filelen % sizeof(*in))
 		ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( count*sizeof(*out));	
+	out = Hunk_Alloc_Frag ( &loadmodel->marksurfaces, count*sizeof(*out));	
 
 	loadmodel->marksurfaces = out;
 	loadmodel->nummarksurfaces = count;
@@ -820,7 +821,7 @@ void Mod_LoadSurfedges (lump_t *l)
 	if (l->filelen % sizeof(*in))
 		ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( (count+24)*sizeof(*out));	// extra for skybox
+	out = Hunk_Alloc_Frag ( &loadmodel->surfedges, (count+24)*sizeof(*out));	// extra for skybox
 
 	loadmodel->surfedges = out;
 	loadmodel->numsurfedges = count;
@@ -846,7 +847,7 @@ void Mod_LoadPlanes (lump_t *l)
 	if (l->filelen % sizeof(*in))
 		ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( (count+6)*sizeof(*out));		// extra for skybox
+	out = Hunk_Alloc_Frag ( &loadmodel->planes, (count+6)*sizeof(*out));		// extra for skybox
 	
 	loadmodel->planes = out;
 	loadmodel->numplanes = count;
